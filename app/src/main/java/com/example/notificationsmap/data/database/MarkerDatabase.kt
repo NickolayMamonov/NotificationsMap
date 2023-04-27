@@ -6,17 +6,17 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 
 
-import com.example.notificationsmap.data.entities.Marker
+import com.example.notificationsmap.data.entities.MarkerEntity
 
 
-@Database(entities = [Marker::class], version = 1)
+
+@Database(entities = [MarkerEntity::class], version = 1)
 abstract class MarkerDatabase: RoomDatabase() {
-    abstract fun mapDao(): MarkerDao
+    abstract fun markerDao(): MarkerDao
 
     companion object{
 
         private lateinit var db: MarkerDatabase
-
         fun getDatabase(context: Context): MarkerDatabase {
             db = Room.databaseBuilder(
                 context,

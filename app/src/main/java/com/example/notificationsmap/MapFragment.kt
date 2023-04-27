@@ -7,11 +7,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.ViewModelProvider
-import androidx.room.Room
-import com.example.notificationsmap.data.App
+import androidx.lifecycle.lifecycleScope
 
-import com.example.notificationsmap.data.database.MarkerDatabase
-import com.example.notificationsmap.data.entities.Marker
+import com.example.notificationsmap.data.entities.MarkerEntity
 import com.example.notificationsmap.databinding.FragmentMapBinding
 import com.yandex.mapkit.Animation
 import com.yandex.mapkit.MapKit
@@ -28,14 +26,14 @@ import com.yandex.mapkit.user_location.UserLocationLayer
 import com.yandex.mapkit.user_location.UserLocationObjectListener
 import com.yandex.mapkit.user_location.UserLocationView
 import com.yandex.runtime.image.ImageProvider
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
 
-class MapFragment : Fragment(), UserLocationObjectListener,MapObjectTapListener, InputListener {
+class MapFragment : Fragment(), UserLocationObjectListener, InputListener {
+    private lateinit var viewModel: MapViewModel
     lateinit var mapView: MapView
-    lateinit var locationMapkit: UserLocationLayer
-    lateinit var binding: FragmentMapBinding
+    private lateinit var locationMapkit: UserLocationLayer
+    private lateinit var binding: FragmentMapBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         MapKitFactory.setApiKey(API_KEY)
@@ -48,22 +46,27 @@ class MapFragment : Fragment(), UserLocationObjectListener,MapObjectTapListener,
     ): View? {
         // Inflate the layout for this fragment
         binding = FragmentMapBinding.inflate(inflater)
+        viewModel = ViewModelProvider(this)[MapViewModel::class.java]
+        lifecycleScope.launch{
+            val markers = viewModel.getAllMarkers()
+            for (marker in markers){
+                mapView.map.mapObjects.addPlacemark(Point(marker.lat,marker.lng))
+            }
+        }
+
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-//        val markerPosDao = App.getdb(requireContext()).markerPosDao()
-//        MapViewModel = ViewModelProvider(
-//            this,
-//            MapViewModelFactory(markerPosDao)
-//        ).get(MapViewModel::class.java)
 
         mapView = binding.mapview
         var mapkit : MapKit = MapKitFactory.getInstance()
         locationMapkit = mapkit.createUserLocationLayer(mapView.mapWindow)
         locationMapkit.isVisible = true
         locationMapkit.setObjectListener(this)
+
+
 
         mapkit.createLocationManager().requestSingleUpdate(object: LocationListener {
             override fun onLocationUpdated(location: Location) {
@@ -78,6 +81,9 @@ class MapFragment : Fragment(), UserLocationObjectListener,MapObjectTapListener,
 
             }
         })
+
+
+
     }
 
     override fun onStart() {
@@ -112,36 +118,19 @@ class MapFragment : Fragment(), UserLocationObjectListener,MapObjectTapListener,
     }
 
     override fun onMapTap(map: Map, point: Point) {
-        var db = Room.databaseBuilder(
-            requireContext(),
-            MarkerDatabase::class.java,
-            "markers"
-        ).build()
-//        addMarkerToMap()
-        locationMapkit.setAnchor(
-            PointF((mapView.width() * 0.5).toFloat(),(mapView.height() * 0.5).toFloat()),
-            PointF((mapView.width() * 0.5).toFloat(),(mapView.height() * 0.5).toFloat())
-        )
 
-
-        GlobalScope.launch {
-            val marker = Marker.from(point.latitude,point.latitude)
-            db.mapDao().insertMarkerPos(marker)
-            mapView.map.mapObjects.addPlacemark(Point(marker.lat,marker.lng))
-        }
-    }
-
-//    private fun addMarkerToMap(point: Point) {
-//        val marker = Marker(0,point.latitude,point.longitude)
-//        MapViewModel.
-//    }
-
-    override fun onMapLongTap(map: Map, point: Point) {
+//        locationMapkit.setAnchor(
+//            PointF((mapView.width() * 0.5).toFloat(),(mapView.height() * 0.5).toFloat()),
+//            PointF((mapView.width() * 0.5).toFloat(),(mapView.height() * 0.5).toFloat())
+//        )
+        val marker = MarkerEntity.from(point.latitude,point.longitude)
+        viewModel.insertMarkerPos(marker)
+        mapView.map.mapObjects.addPlacemark(Point(marker.lat,marker.lng))
 
     }
 
-    override fun onMapObjectTap(p0: MapObject, p1: Point): Boolean {
-        TODO("Not yet implemented")
+    override fun onMapLongTap(p0: Map, p1: Point) {
+
     }
 
 }
