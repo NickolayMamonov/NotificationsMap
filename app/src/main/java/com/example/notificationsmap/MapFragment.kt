@@ -8,6 +8,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.findNavController
+import androidx.navigation.fragment.findNavController
+import androidx.navigation.ui.setupWithNavController
 
 import com.example.notificationsmap.data.entities.MarkerEntity
 import com.example.notificationsmap.databinding.FragmentMapBinding
@@ -46,10 +49,16 @@ class MapFragment : Fragment(), UserLocationObjectListener, InputListener {
     ): View? {
         // Inflate the layout for this fragment
         binding = FragmentMapBinding.inflate(inflater)
+
+
+
+
+
         viewModel = ViewModelProvider(this)[MapViewModel::class.java]
         lifecycleScope.launch{
             val markers = viewModel.getAllMarkers()
             for (marker in markers){
+
                 mapView.map.mapObjects.addPlacemark(Point(marker.lat,marker.lng))
             }
         }
@@ -59,6 +68,25 @@ class MapFragment : Fragment(), UserLocationObjectListener, InputListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        val navController = activity?.findNavController(R.id.navbar)
+        binding.navbar.setupWithNavController(navbar,navController)
+//        val navGraph = findNavController().navInflater.inflate(R.navigation.nav_graph)
+//        binding.navbar.setupWithNavController(navController)
+        binding.navbar.setOnItemReselectedListener {menuItem ->
+            when(menuItem.itemId){
+                R.id.finderAction -> {
+                    findNavController().navigate(R.id.action_mapFragment_to_finderFragment,null)
+
+                }
+                R.id.createTaskAction -> {
+                    findNavController().navigate(R.id.action_mapFragment_to_createTaskFragment,null)
+                }
+                R.id.tasksAction -> {
+                    findNavController().navigate(R.id.action_mapFragment_to_tasksFragment,null)
+                }
+            }
+        }
+
 
         mapView = binding.mapview
         var mapkit : MapKit = MapKitFactory.getInstance()
@@ -71,7 +99,7 @@ class MapFragment : Fragment(), UserLocationObjectListener, InputListener {
         mapkit.createLocationManager().requestSingleUpdate(object: LocationListener {
             override fun onLocationUpdated(location: Location) {
                 mapView.map.move(
-                    CameraPosition(location.position, 15.0f, 0.0f, 0.0f),
+                    CameraPosition(location.position, 25.0f, 0.0f, 0.0f),
                     Animation(Animation.Type.SMOOTH, 5F),
                     null
                 )
@@ -132,5 +160,6 @@ class MapFragment : Fragment(), UserLocationObjectListener, InputListener {
     override fun onMapLongTap(p0: Map, p1: Point) {
 
     }
+
 
 }

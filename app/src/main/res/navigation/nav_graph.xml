@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@+id/mapFragment">
+    <fragment
+        android:id="@+id/mapFragment"
+        android:name="com.example.notificationsmap.MapFragment"
+        android:label="fragment_map"
+        tools:layout="@layout/fragment_map">
+        <action
+            android:id="@+id/action_mapFragment_to_tasksFragment"
+            app:destination="@+id/tasksFragment"/>
+        <action
+            android:id="@+id/action_mapFragment_to_createTaskFragment"
+            app:destination="@+id/createTaskFragment"/>
+        <action
+            android:id="@+id/action_mapFragment_to_finderFragment"
+            app:destination="@+id/finderAction"/>
+
+    </fragment>
+    <fragment
+        android:id="@+id/tasksFragment"
+        android:name="com.example.notificationsmap.TasksFragment"
+        android:label="fragment_tasks"
+        tools:layout="@layout/fragment_tasks">
+        <action
+            android:id="@+id/action_tasksFragment_to_mapFragment"
+            app:destination="@+id/mapFragment"/>
+        <action
+            android:id="@+id/action_tasksFragment_to_finderFragment"
+            app:destination="@+id/finderFragment"/>
+
+    </fragment>
+    <fragment
+        android:id="@+id/finderFragment"
+        android:name="com.example.notificationsmap.FinderFragment"
+        android:label="fragment_finder"
+        tools:layout="@layout/fragment_finder">
+
+
+    </fragment>
+    <fragment
+        android:id="@+id/createTaskFragment"
+        android:name="com.example.notificationsmap.CreateTaskFragment"
+        android:label="fragment_create_task"
+        tools:layout="@layout/fragment_create_task">
+        <action
+            android:id="@+id/action_createTaskFragment_to_mapFragment"
+            app:destination="@+id/mapFragment"/>
+        <action
+            android:id="@+id/action_createTaskFragment_to_finderFragment"
+            app:destination="@+id/finderFragment"/>
+        <action
+            android:id="@+id/action_createTaskFragment_to_tasksFragment"
+            app:destination="@+id/tasksFragment"/>
+    </fragment>
+
+</navigation>
