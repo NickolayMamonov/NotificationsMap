@@ -12,8 +12,8 @@ import androidx.navigation.ui.navigateUp
 import com.example.notificationsmap.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
-    private lateinit var navController: NavController
-    private lateinit var appBarConfiguration: AppBarConfiguration
+//    private lateinit var navController: NavController
+//    private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -21,15 +21,12 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
         requestLocationPermission()
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.fragmentContainer)as NavHostFragment
-        navController = navHostFragment.navController
-//        supportFragmentManager.beginTransaction()
-//            .replace(R.id.fragmentContainer, MapFragment())
-//            .commit()
+//        navController = navHostFragment.navController
     }
 
-    override fun onSupportNavigateUp(): Boolean {
-        return navController.navigateUp(appBarConfiguration)
-    }
+//    override fun onSupportNavigateUp(): Boolean {
+//        return navController.navigateUp(appBarConfiguration)
+//    }
     private fun requestLocationPermission(){
         if (ActivityCompat.checkSelfPermission(
                 this,

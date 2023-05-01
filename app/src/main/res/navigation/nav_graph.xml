@@ -3,15 +3,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@+id/mapFragment">
+    app:startDestination="@+id/main_fragment">
     <fragment
-        android:id="@+id/mapFragment"
-        android:name="com.example.notificationsmap.MapFragment"
-        android:label="fragment_map"
+        android:id="@+id/main_fragment"
+        android:name="com.example.notificationsmap.MainFragment"
+        android:label="fragment_main"
         tools:layout="@layout/fragment_map">
-        <action
-            android:id="@+id/action_mapFragment_to_tasksFragment"
-            app:destination="@+id/tasksFragment"/>
         <action
             android:id="@+id/action_mapFragment_to_createTaskFragment"
             app:destination="@+id/createTaskFragment"/>
@@ -21,25 +18,10 @@
 
     </fragment>
     <fragment
-        android:id="@+id/tasksFragment"
-        android:name="com.example.notificationsmap.TasksFragment"
-        android:label="fragment_tasks"
-        tools:layout="@layout/fragment_tasks">
-        <action
-            android:id="@+id/action_tasksFragment_to_mapFragment"
-            app:destination="@+id/mapFragment"/>
-        <action
-            android:id="@+id/action_tasksFragment_to_finderFragment"
-            app:destination="@+id/finderFragment"/>
-
-    </fragment>
-    <fragment
         android:id="@+id/finderFragment"
         android:name="com.example.notificationsmap.FinderFragment"
         android:label="fragment_finder"
         tools:layout="@layout/fragment_finder">
-
-
     </fragment>
     <fragment
         android:id="@+id/createTaskFragment"

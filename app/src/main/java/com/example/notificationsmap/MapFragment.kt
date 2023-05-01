@@ -2,16 +2,12 @@ package com.example.notificationsmap
 
 import android.graphics.PointF
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.findNavController
-import androidx.navigation.fragment.findNavController
-import androidx.navigation.ui.setupWithNavController
-
 import com.example.notificationsmap.data.entities.MarkerEntity
 import com.example.notificationsmap.databinding.FragmentMapBinding
 import com.yandex.mapkit.Animation
@@ -22,7 +18,8 @@ import com.yandex.mapkit.layers.ObjectEvent
 import com.yandex.mapkit.location.Location
 import com.yandex.mapkit.location.LocationListener
 import com.yandex.mapkit.location.LocationStatus
-import com.yandex.mapkit.map.*
+import com.yandex.mapkit.map.CameraPosition
+import com.yandex.mapkit.map.InputListener
 import com.yandex.mapkit.map.Map
 import com.yandex.mapkit.mapview.MapView
 import com.yandex.mapkit.user_location.UserLocationLayer
@@ -37,29 +34,18 @@ class MapFragment : Fragment(), UserLocationObjectListener, InputListener {
     lateinit var mapView: MapView
     private lateinit var locationMapkit: UserLocationLayer
     private lateinit var binding: FragmentMapBinding
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        MapKitFactory.setApiKey(API_KEY)
-        MapKitFactory.initialize(context)
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
+    ): View {
+
         binding = FragmentMapBinding.inflate(inflater)
-
-
-
-
-
         viewModel = ViewModelProvider(this)[MapViewModel::class.java]
-        lifecycleScope.launch{
+        lifecycleScope.launch {
             val markers = viewModel.getAllMarkers()
-            for (marker in markers){
-
-                mapView.map.mapObjects.addPlacemark(Point(marker.lat,marker.lng))
+            for (marker in markers) {
+                mapView.map.mapObjects.addPlacemark(Point(marker.lat, marker.lng))
             }
         }
 
@@ -68,35 +54,16 @@ class MapFragment : Fragment(), UserLocationObjectListener, InputListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val navController = activity?.findNavController(R.id.navbar)
-        binding.navbar.setupWithNavController(navbar,navController)
-//        val navGraph = findNavController().navInflater.inflate(R.navigation.nav_graph)
-//        binding.navbar.setupWithNavController(navController)
-        binding.navbar.setOnItemReselectedListener {menuItem ->
-            when(menuItem.itemId){
-                R.id.finderAction -> {
-                    findNavController().navigate(R.id.action_mapFragment_to_finderFragment,null)
-
-                }
-                R.id.createTaskAction -> {
-                    findNavController().navigate(R.id.action_mapFragment_to_createTaskFragment,null)
-                }
-                R.id.tasksAction -> {
-                    findNavController().navigate(R.id.action_mapFragment_to_tasksFragment,null)
-                }
-            }
-        }
-
 
         mapView = binding.mapview
-        var mapkit : MapKit = MapKitFactory.getInstance()
+        var mapkit: MapKit = MapKitFactory.getInstance()
         locationMapkit = mapkit.createUserLocationLayer(mapView.mapWindow)
         locationMapkit.isVisible = true
         locationMapkit.setObjectListener(this)
 
 
 
-        mapkit.createLocationManager().requestSingleUpdate(object: LocationListener {
+        mapkit.createLocationManager().requestSingleUpdate(object : LocationListener {
             override fun onLocationUpdated(location: Location) {
                 mapView.map.move(
                     CameraPosition(location.position, 25.0f, 0.0f, 0.0f),
@@ -109,8 +76,6 @@ class MapFragment : Fragment(), UserLocationObjectListener, InputListener {
 
             }
         })
-
-
 
     }
 
@@ -130,11 +95,11 @@ class MapFragment : Fragment(), UserLocationObjectListener, InputListener {
 
     override fun onObjectAdded(userLocationView: UserLocationView) {
         locationMapkit.setAnchor(
-            PointF((mapView.width() *0.5).toFloat(),(mapView.height() *0.5).toFloat()),
-            PointF((mapView.width() *0.5).toFloat(),(mapView.height() *0.83).toFloat())
+            PointF((mapView.width() * 0.5).toFloat(), (mapView.height() * 0.5).toFloat()),
+            PointF((mapView.width() * 0.5).toFloat(), (mapView.height() * 0.83).toFloat())
         )
 
-        userLocationView.pin.setIcon(ImageProvider.fromResource(requireContext(),R.drawable.pin))
+            userLocationView.pin.setIcon(ImageProvider.fromResource(requireContext(), R.drawable.pin))
     }
 
     override fun onObjectRemoved(p0: UserLocationView) {
@@ -146,14 +111,9 @@ class MapFragment : Fragment(), UserLocationObjectListener, InputListener {
     }
 
     override fun onMapTap(map: Map, point: Point) {
-
-//        locationMapkit.setAnchor(
-//            PointF((mapView.width() * 0.5).toFloat(),(mapView.height() * 0.5).toFloat()),
-//            PointF((mapView.width() * 0.5).toFloat(),(mapView.height() * 0.5).toFloat())
-//        )
-        val marker = MarkerEntity.from(point.latitude,point.longitude)
+        val marker = MarkerEntity.from(point.latitude, point.longitude)
         viewModel.insertMarkerPos(marker)
-        mapView.map.mapObjects.addPlacemark(Point(marker.lat,marker.lng))
+        mapView.map.mapObjects.addPlacemark(Point(marker.lat, marker.lng))
 
     }
 
