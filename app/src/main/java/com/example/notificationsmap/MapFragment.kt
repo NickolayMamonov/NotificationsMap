@@ -22,6 +22,8 @@ import com.yandex.mapkit.map.CameraPosition
 import com.yandex.mapkit.map.InputListener
 import com.yandex.mapkit.map.Map
 import com.yandex.mapkit.mapview.MapView
+import com.yandex.mapkit.search.SearchFactory
+import com.yandex.mapkit.search.SearchManager
 import com.yandex.mapkit.user_location.UserLocationLayer
 import com.yandex.mapkit.user_location.UserLocationObjectListener
 import com.yandex.mapkit.user_location.UserLocationView
@@ -33,6 +35,7 @@ class MapFragment : Fragment(), UserLocationObjectListener, InputListener {
     private lateinit var viewModel: MapViewModel
     lateinit var mapView: MapView
     private lateinit var locationMapkit: UserLocationLayer
+    private lateinit var searchManager: SearchManager
     private lateinit var binding: FragmentMapBinding
 
     override fun onCreateView(
@@ -54,14 +57,11 @@ class MapFragment : Fragment(), UserLocationObjectListener, InputListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         mapView = binding.mapview
-        var mapkit: MapKit = MapKitFactory.getInstance()
+        val mapkit: MapKit = MapKitFactory.getInstance()
         locationMapkit = mapkit.createUserLocationLayer(mapView.mapWindow)
         locationMapkit.isVisible = true
         locationMapkit.setObjectListener(this)
-
-
 
         mapkit.createLocationManager().requestSingleUpdate(object : LocationListener {
             override fun onLocationUpdated(location: Location) {
@@ -78,6 +78,7 @@ class MapFragment : Fragment(), UserLocationObjectListener, InputListener {
         })
 
     }
+
 
     override fun onStart() {
         mapView.onStart()
