@@ -1,4 +1,4 @@
-package com.example.notificationsmap
+package com.example.notificationsmap.view
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -9,11 +9,10 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.notificationsmap.data.database.MarkerDatabase
+import com.example.notificationsmap.TasksAdapter
+import com.example.notificationsmap.TasksViewModel
 import com.example.notificationsmap.databinding.FragmentTasksBinding
-import com.google.android.gms.tasks.Task
 import kotlinx.coroutines.launch
-
 
 class TasksFragment : Fragment() {
     private lateinit var binding: FragmentTasksBinding
@@ -25,7 +24,7 @@ class TasksFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentTasksBinding.inflate(inflater,container,false)
+        binding = FragmentTasksBinding.inflate(inflater, container, false)
         viewModel = ViewModelProvider(this)[TasksViewModel::class.java]
         taskAdapter = TasksAdapter(emptyList())
         recyclerView = binding.recycleview

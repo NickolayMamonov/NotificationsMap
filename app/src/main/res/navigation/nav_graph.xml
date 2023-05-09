@@ -6,7 +6,7 @@
     app:startDestination="@+id/main_fragment">
     <fragment
         android:id="@+id/main_fragment"
-        android:name="com.example.notificationsmap.MainFragment"
+        android:name="com.example.notificationsmap.view.MainFragment"
         android:label="fragment_main"
         tools:layout="@layout/fragment_map">
         <action
@@ -19,13 +19,13 @@
     </fragment>
     <fragment
         android:id="@+id/finderFragment"
-        android:name="com.example.notificationsmap.FinderFragment"
+        android:name="com.example.notificationsmap.view.FinderFragment"
         android:label="fragment_finder"
         tools:layout="@layout/fragment_finder">
     </fragment>
     <fragment
         android:id="@+id/createTaskFragment"
-        android:name="com.example.notificationsmap.CreateTaskFragment"
+        android:name="com.example.notificationsmap.view.CreateTaskFragment"
         android:label="fragment_create_task"
         tools:layout="@layout/fragment_create_task">
         <action

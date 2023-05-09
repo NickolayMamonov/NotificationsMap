@@ -1,13 +1,13 @@
-
-package com.example.notificationsmap
+package com.example.notificationsmap.view
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.commit
 import androidx.navigation.fragment.NavHostFragment
+import com.example.notificationsmap.R
 import com.example.notificationsmap.databinding.FragmentMainBinding
 
 class MainFragment : Fragment() {
@@ -27,6 +27,7 @@ class MainFragment : Fragment() {
         childFragmentManager.commit {
             replace(R.id.content, nhf)
         }
+
         binding.navbar.setOnItemSelectedListener { item ->
             when(item.itemId) {
                 R.id.map -> {
@@ -37,7 +38,7 @@ class MainFragment : Fragment() {
                 }
                 R.id.tasks -> {
                     childFragmentManager.commit {
-                        replace(R.id.content, TasksFragment())
+                        replace(R.id.content, CreateTaskFragment())
                     }
                     return@setOnItemSelectedListener true
                 }
