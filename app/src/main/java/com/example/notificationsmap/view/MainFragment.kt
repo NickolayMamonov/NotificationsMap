@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.commit
 import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.fragment.findNavController
 import com.example.notificationsmap.R
 import com.example.notificationsmap.databinding.FragmentMainBinding
 
@@ -27,18 +28,28 @@ class MainFragment : Fragment() {
         childFragmentManager.commit {
             replace(R.id.content, nhf)
         }
+        binding.btnAdd.setOnClickListener {
 
+//            childFragmentManager.commit {
+//                replace(R.id.fragmentContainer,CreateTaskFragment())
+//
+//            }
+
+            findNavController().navigate(R.id.action_mainFragment_to_createTaskFragment)
+        }
         binding.navbar.setOnItemSelectedListener { item ->
             when(item.itemId) {
                 R.id.map -> {
+                    binding.btnAdd.visibility = View.VISIBLE
                     childFragmentManager.commit {
                         replace(R.id.content, mapGraphFragment)
                     }
                     return@setOnItemSelectedListener true
                 }
                 R.id.tasks -> {
+                    binding.btnAdd.visibility = View.INVISIBLE
                     childFragmentManager.commit {
-                        replace(R.id.content, CreateTaskFragment())
+                        replace(R.id.content, TasksFragment())
                     }
                     return@setOnItemSelectedListener true
                 }

@@ -9,9 +9,10 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.notificationsmap.data.database.MarkerDao
+import com.example.notificationsmap.data.entities.ActiveTaskEntity
 import com.example.notificationsmap.data.entities.MarkerEntity
 
-class TasksAdapter(private var markerList: List<MarkerEntity>): RecyclerView.Adapter<TasksAdapter.ViewHolder>() {
+class TasksAdapter(private var taskList: List<ActiveTaskEntity>): RecyclerView.Adapter<TasksAdapter.ViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TasksAdapter.ViewHolder {
         val itemView = LayoutInflater.from(parent.context).inflate(R.layout.fragment_task_item,parent,false)
         return ViewHolder(itemView)
@@ -19,18 +20,18 @@ class TasksAdapter(private var markerList: List<MarkerEntity>): RecyclerView.Ada
 
     override fun onBindViewHolder(holder: TasksAdapter.ViewHolder, position: Int) {
         holder.setIsRecyclable(false)
-        val markers = markerList[position]
-        holder.address.text =markers.lat.toString()
+        val task = taskList[position]
+        //holder.address.text =markers.lat.toString()
 
     }
 
     override fun getItemCount(): Int {
-        return markerList.size
+        return taskList.size
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    fun updateData(newTask: List<MarkerEntity>) {
-        markerList = newTask
+    fun updateData(newTask: List<ActiveTaskEntity>) {
+        taskList = newTask
         notifyDataSetChanged()
     }
 

@@ -1,18 +1,18 @@
 package com.example.notificationsmap.data.database
 
-import androidx.lifecycle.LiveData
+
 import androidx.room.*
-import com.example.notificationsmap.data.entities.MarkerEntity
+import com.example.notificationsmap.data.entities.ActiveTaskEntity
 
 @Dao
 interface MarkerDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertMarkerPos(marker: MarkerEntity)
+    suspend fun insertMarkerPos(task: ActiveTaskEntity)
 
     @Delete
-    suspend fun deleteMarkerPos(pos: MarkerEntity)
+    suspend fun deleteMarkerPos(task: ActiveTaskEntity)
 
-    @Query("SELECT * FROM markers")
-    suspend fun getAllMarkers(): List<MarkerEntity>
+    @Query("SELECT * FROM ActiveTasks")
+    suspend fun getAllTasks(): List<ActiveTaskEntity>
 
 }

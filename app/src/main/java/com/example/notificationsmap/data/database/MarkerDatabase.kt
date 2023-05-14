@@ -4,13 +4,14 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import com.example.notificationsmap.data.entities.ActiveTaskEntity
 
 
 import com.example.notificationsmap.data.entities.MarkerEntity
 
 
 
-@Database(entities = [MarkerEntity::class], version = 1)
+@Database(entities = [ActiveTaskEntity::class], version = 1)
 abstract class MarkerDatabase: RoomDatabase() {
     abstract fun markerDao(): MarkerDao
 
@@ -20,7 +21,7 @@ abstract class MarkerDatabase: RoomDatabase() {
         fun getDatabase(context: Context): MarkerDatabase {
             db = Room.databaseBuilder(
                 context,
-                MarkerDatabase::class.java, "markers"
+                MarkerDatabase::class.java, "ActiveTasks"
             ).build()
             return db
         }

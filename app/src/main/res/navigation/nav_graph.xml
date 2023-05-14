@@ -10,18 +10,8 @@
         android:label="fragment_main"
         tools:layout="@layout/fragment_map">
         <action
-            android:id="@+id/action_mapFragment_to_createTaskFragment"
+            android:id="@+id/action_mainFragment_to_createTaskFragment"
             app:destination="@+id/createTaskFragment"/>
-        <action
-            android:id="@+id/action_mapFragment_to_finderFragment"
-            app:destination="@+id/finderAction"/>
-
-    </fragment>
-    <fragment
-        android:id="@+id/finderFragment"
-        android:name="com.example.notificationsmap.view.FinderFragment"
-        android:label="fragment_finder"
-        tools:layout="@layout/fragment_finder">
     </fragment>
     <fragment
         android:id="@+id/createTaskFragment"
@@ -30,13 +20,7 @@
         tools:layout="@layout/fragment_create_task">
         <action
             android:id="@+id/action_createTaskFragment_to_mapFragment"
-            app:destination="@+id/mapFragment"/>
-        <action
-            android:id="@+id/action_createTaskFragment_to_finderFragment"
-            app:destination="@+id/finderFragment"/>
-        <action
-            android:id="@+id/action_createTaskFragment_to_tasksFragment"
-            app:destination="@+id/tasksFragment"/>
+            app:destination="@id/main_fragment"/>
     </fragment>
 
 </navigation>
