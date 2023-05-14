@@ -5,15 +5,17 @@ import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-@Entity(tableName = "ActiveTasks")
+@Entity(tableName = "Tasks")
 data class ActiveTaskEntity(
     @PrimaryKey(autoGenerate = true) val id: Long ?= null,
+    @ColumnInfo(name = "name") val name: String,
     @ColumnInfo(name = "isActive") val isActive: Boolean,
     @Embedded val marker : MarkerEntity
 ){
     companion object{
-        fun add(isActive: Boolean,marker: MarkerEntity): ActiveTaskEntity{
+        fun add(name: String,isActive: Boolean,marker: MarkerEntity): ActiveTaskEntity{
             return  ActiveTaskEntity(
+                name = name,
                 isActive = isActive,
                 marker = marker
             )

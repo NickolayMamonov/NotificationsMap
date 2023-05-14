@@ -4,7 +4,7 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-@Entity(tableName = "test_markers")
+@Entity(tableName = "markerpoints")
 data class MarkerEntity(
     @PrimaryKey(autoGenerate = true) val markid: Long? = null,
     @ColumnInfo(name = "time_arrival") val time_arrival : String,

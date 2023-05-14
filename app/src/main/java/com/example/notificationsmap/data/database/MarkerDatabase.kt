@@ -21,7 +21,7 @@ abstract class MarkerDatabase: RoomDatabase() {
         fun getDatabase(context: Context): MarkerDatabase {
             db = Room.databaseBuilder(
                 context,
-                MarkerDatabase::class.java, "ActiveTasks"
+                MarkerDatabase::class.java, "Tasks"
             ).build()
             return db
         }

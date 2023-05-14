@@ -96,19 +96,19 @@ class CreateTaskFragment : Fragment() {
         lifecycleScope.launch{
             binding.acceptBtn.setOnClickListener {
                 val marker = MarkerEntity.from(
-                    time_arrival = binding.timeArrivalPicker.toString(),
-                    date_arrival = binding.dateArrivalPicker.toString(),
-                    time_remember = binding.timeRememberPicker.toString(),
-                    date_remember = binding.dateRememberPicker.toString(),
-                    address = binding.address.toString(),
-                    desc = binding.description.toString(),
+                    time_arrival = binding.timeArrivalPicker.text.toString(),
+                    date_arrival = binding.dateArrivalPicker.text.toString(),
+                    time_remember = binding.timeRememberPicker.text.toString(),
+                    date_remember = binding.dateRememberPicker.text.toString(),
+                    address = binding.address.text.toString(),
+                    desc = binding.description.text.toString(),
                     lat = lat.toDouble(),
                     lng = lng.toDouble()
                 )
                 val task = ActiveTaskEntity.add(
+                    name = binding.name.text.toString(),
                     isActive = true,
                     marker = marker
-
                 )
                 createTaskViewModel.insertMarkerPos(task)
                 findNavController().navigate(R.id.action_createTaskFragment_to_mapFragment)

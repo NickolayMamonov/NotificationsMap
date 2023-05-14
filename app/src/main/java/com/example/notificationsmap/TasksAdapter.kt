@@ -6,7 +6,9 @@ import android.location.Geocoder
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Switch
 import android.widget.TextView
+import androidx.appcompat.widget.SwitchCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.example.notificationsmap.data.database.MarkerDao
 import com.example.notificationsmap.data.entities.ActiveTaskEntity
@@ -21,7 +23,13 @@ class TasksAdapter(private var taskList: List<ActiveTaskEntity>): RecyclerView.A
     override fun onBindViewHolder(holder: TasksAdapter.ViewHolder, position: Int) {
         holder.setIsRecyclable(false)
         val task = taskList[position]
-        //holder.address.text =markers.lat.toString()
+        holder.name.text = task.name
+        holder.isActive.isChecked = task.isActive
+        holder.arrival_time.text = task.marker.time_arrival
+        holder.arrival_date.text = task.marker.date_arrival
+        holder.remember_time.text = task.marker.time_remember
+        holder.remember_date.text =task.marker.date_remember
+//        holder.address.text =markers.lat.toString()
 
     }
 
@@ -36,7 +44,13 @@ class TasksAdapter(private var taskList: List<ActiveTaskEntity>): RecyclerView.A
     }
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        var address : TextView = itemView.findViewById(R.id.address)
+        var name : TextView = itemView.findViewById(R.id.name)
+        var isActive : SwitchCompat = itemView.findViewById(R.id.switch_check)
+        var arrival_time : TextView = itemView.findViewById(R.id.arrival_time)
+        var arrival_date : TextView = itemView.findViewById(R.id.arrival_date)
+        var remember_time : TextView = itemView.findViewById(R.id.remember_time)
+        var remember_date : TextView = itemView.findViewById(R.id.remember_date)
+//        var address : TextView = itemView.findViewById(R.id.address)
 
     }
 }

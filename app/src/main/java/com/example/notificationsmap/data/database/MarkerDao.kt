@@ -12,7 +12,7 @@ interface MarkerDao {
     @Delete
     suspend fun deleteMarkerPos(task: ActiveTaskEntity)
 
-    @Query("SELECT * FROM ActiveTasks")
+    @Query("SELECT * FROM Tasks")
     suspend fun getAllTasks(): List<ActiveTaskEntity>
 
 }
