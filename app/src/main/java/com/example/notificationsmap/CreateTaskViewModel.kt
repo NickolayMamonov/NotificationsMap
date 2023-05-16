@@ -1,6 +1,7 @@
 package com.example.notificationsmap
 
 import android.app.Application
+import android.content.Intent
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.notificationsmap.data.TaskRepo
@@ -23,6 +24,7 @@ class CreateTaskViewModel(application: Application): AndroidViewModel(applicatio
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
                 repo.insertMarkerPos(task)
+
             }
         }
     }

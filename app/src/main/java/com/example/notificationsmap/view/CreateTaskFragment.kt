@@ -2,6 +2,7 @@ package com.example.notificationsmap.view
 
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -14,6 +15,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.notificationsmap.CreateTaskViewModel
+import com.example.notificationsmap.NotificationService
 
 import com.example.notificationsmap.R
 import com.example.notificationsmap.SharedViewModel
@@ -43,18 +45,6 @@ class CreateTaskFragment : Fragment() {
         binding = FragmentCreateTaskBinding.inflate(inflater)
         val calendar = Calendar.getInstance()
 
-//        sharedViewModel = ViewModelProvider(this)[SharedViewModel::class.java]
-//        setFragmentResultListener("mapPoint"){ _, bundle ->
-//            val latitude = bundle.getDouble("latitude")
-//            val longitude = bundle.getDouble("longitude")
-//                //binding.address.text = latitude.toString()
-//        }
-//        createTaskViewModel.latCoord.observe(viewLifecycleOwner,{coords ->
-//        })
-//        val latCoord = sharedViewModel.latCoord.value
-//        val lngCoord = sharedViewModel.lngCoord.value
-//
-//        binding.address.setText(latCoord.toString())
         binding.timeArrivalPicker.setOnClickListener {
             showTimePickerDialog(binding.timeArrivalPicker,calendar)
         }
@@ -111,6 +101,10 @@ class CreateTaskFragment : Fragment() {
                     marker = marker
                 )
                 createTaskViewModel.insertMarkerPos(task)
+
+//                val serviceIntent = Intent(this, NotificationService::class.java)
+//                startService(serviceIntent)
+
                 findNavController().navigate(R.id.action_createTaskFragment_to_mapFragment)
             }
             binding.cancelBtn.setOnClickListener {
