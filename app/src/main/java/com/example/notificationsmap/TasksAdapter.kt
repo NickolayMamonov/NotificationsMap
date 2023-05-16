@@ -29,7 +29,7 @@ class TasksAdapter(private var taskList: List<ActiveTaskEntity>): RecyclerView.A
         holder.arrival_date.text = task.marker.date_arrival
         holder.remember_time.text = task.marker.time_remember
         holder.remember_date.text =task.marker.date_remember
-//        holder.address.text =markers.lat.toString()
+        holder.address.text = "${task.marker.lat} , ${task.marker.lng}"
 
     }
 
@@ -50,7 +50,7 @@ class TasksAdapter(private var taskList: List<ActiveTaskEntity>): RecyclerView.A
         var arrival_date : TextView = itemView.findViewById(R.id.arrival_date)
         var remember_time : TextView = itemView.findViewById(R.id.remember_time)
         var remember_date : TextView = itemView.findViewById(R.id.remember_date)
-//        var address : TextView = itemView.findViewById(R.id.address)
+        var address : TextView = itemView.findViewById(R.id.address)
 
     }
 }
