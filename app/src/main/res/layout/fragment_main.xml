@@ -22,7 +22,7 @@
         android:padding="25dp"
         app:layout_constraintBottom_toTopOf="@id/navbar"
         app:layout_constraintEnd_toEndOf="parent"
-        android:visibility="invisible"/>
+        android:visibility="visible"/>
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/navbar"
@@ -33,6 +33,5 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/content"
         app:menu="@menu/bottom_nav_menu" />
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

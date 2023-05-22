@@ -15,7 +15,11 @@ data class MarkerEntity(
     @ColumnInfo(name = "description") val desc : String,
     @ColumnInfo(name = "latitude") val lat: Double,
     @ColumnInfo(name = "longitude") val lng: Double
-) {
+)
+
+
+
+{
     companion object{
         fun from( time_arrival: String,date_arrival: String,time_remember: String,date_remember: String,address: String,desc: String,lat: Double,lng: Double): MarkerEntity {
             return MarkerEntity(

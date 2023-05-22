@@ -1,13 +1,25 @@
 package com.example.notificationsmap.view
 
+import android.content.Context
+import android.content.pm.PackageManager
 import android.graphics.PointF
+import android.location.LocationManager
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.Manifest
+import android.content.Intent
+import android.content.IntentFilter
+import android.graphics.Color
+import android.location.Location
+import android.location.LocationListener
+import android.util.Log
 import android.view.inputmethod.EditorInfo
 import android.widget.EditText
 import android.widget.Toast
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProvider
@@ -15,11 +27,17 @@ import androidx.lifecycle.lifecycleScope
 import com.example.notificationsmap.MapViewModel
 import com.example.notificationsmap.R
 import com.example.notificationsmap.SharedViewModel
+import com.example.notificationsmap.TaskBroadcastReceiver
 import com.example.notificationsmap.databinding.FragmentMapBinding
+import com.google.android.gms.location.LocationServices
+import com.yandex.mapkit.Animation
 import com.yandex.mapkit.MapKit
 import com.yandex.mapkit.MapKitFactory
+import com.yandex.mapkit.geometry.Circle
 import com.yandex.mapkit.geometry.Point
+import com.yandex.mapkit.geometry.Polyline
 import com.yandex.mapkit.layers.ObjectEvent
+
 import com.yandex.mapkit.map.*
 import com.yandex.mapkit.map.Map
 import com.yandex.mapkit.mapview.MapView
@@ -32,6 +50,11 @@ import com.yandex.runtime.image.ImageProvider
 import com.yandex.runtime.network.NetworkError
 import com.yandex.runtime.network.RemoteError
 import kotlinx.coroutines.launch
+import java.lang.Math.sqrt
+
+import java.util.concurrent.Executors
+import java.util.concurrent.TimeUnit
+
 
 // Session.SearchListener
 class MapFragment : Fragment(), UserLocationObjectListener, InputListener,
@@ -41,12 +64,11 @@ class MapFragment : Fragment(), UserLocationObjectListener, InputListener,
     private val sharedViewModel: SharedViewModel by activityViewModels()
     private lateinit var mapView: MapView
     private lateinit var locationMapkit: UserLocationLayer
+    private lateinit var locationManager: LocationManager
     private lateinit var binding: FragmentMapBinding
     private lateinit var searchEdit: EditText
     private lateinit var searchManager: SearchManager
     private lateinit var searchSession: Session
-
-
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -55,16 +77,7 @@ class MapFragment : Fragment(), UserLocationObjectListener, InputListener,
 
         binding = FragmentMapBinding.inflate(inflater)
         viewModel = ViewModelProvider(this)[MapViewModel::class.java]
-        searchManager = SearchFactory.getInstance().createSearchManager(SearchManagerType.COMBINED)
-        lifecycleScope.launch {
-            val tasks = viewModel.getAllMarkers()
-            for (task in tasks) {
-                if(task.isActive){
-                    mapView.map.mapObjects.addPlacemark(Point(task.marker.lat, task.marker.lng))
-                }
 
-            }
-        }
 
         return binding.root
     }
@@ -74,11 +87,21 @@ class MapFragment : Fragment(), UserLocationObjectListener, InputListener,
         mapView = binding.mapview
         val mapkit: MapKit = MapKitFactory.getInstance()
         locationMapkit = mapkit.createUserLocationLayer(mapView.mapWindow)
-        mapView.getMap().setRotateGesturesEnabled(false)
-        mapView.map.move(CameraPosition(Point(0.0, 0.0), 14f, 0f, 0f))
+//        mapView.map.move(CameraPosition(Point(0.0, 0.0), 14f, 0f, 0f))
         locationMapkit.isVisible = true
-        locationMapkit.setObjectListener(this)
+//        locationMapkit = mapkit.createUserLocationLayer(mapView.mapWindow)
 
+        locationMapkit.setObjectListener(this)
+        searchManager = SearchFactory.getInstance().createSearchManager(SearchManagerType.COMBINED)
+//        lifecycleScope.launch {
+//            val tasks = viewModel.getAllMarkers()
+//            for (task in tasks) {
+//                if(task.isActive){
+//                    mapView.map.mapObjects.addPlacemark(Point(task.marker.lat, task.marker.lng))
+//                }
+//
+//            }
+//        }
 //        SearchFactory.initialize(this.requireContext())
 //        searchManager = SearchFactory.getInstance().createSearchManager(SearchManagerType.COMBINED)
 //        mapView.map.addCameraListener(this)
@@ -132,18 +155,109 @@ class MapFragment : Fragment(), UserLocationObjectListener, InputListener,
         mapView.onStart()
         MapKitFactory.getInstance().onStart()
         super.onStart()
+        val taskBroadcastReceiver = TaskBroadcastReceiver()
+        val intentFilter = IntentFilter("GEOFENCE_TRIGGERED")
+        requireContext().registerReceiver(taskBroadcastReceiver,intentFilter)
         mapView.map.addInputListener(this)
+        val locationManager = requireContext().getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        if (ActivityCompat.checkSelfPermission(
+                this.requireContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                this.requireContext(),
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ){
+            val permissions = arrayOf(
+                Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            )
+            ActivityCompat.requestPermissions(this.requireActivity(), permissions, 0)
+        }
+        val executor = Executors.newSingleThreadScheduledExecutor()
+        val locationRunnable = Runnable {
+            lifecycleScope.launch{
+                val markers = viewModel.getAllMarkers()
+                val lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
+                if(lastKnownLocation != null){
+                    val point = Point(lastKnownLocation.latitude,lastKnownLocation.longitude)
+                    mapView.map.mapObjects.clear()
+                    mapView.map.mapObjects.addPlacemark(point, ImageProvider.fromResource(context,R.drawable.search_result))
+
+                    val circle = mapView.map.mapObjects.addCircle(
+                        Circle(point, 100.0f),
+                        Color.GREEN,
+                        2.0f,
+                        Color.RED
+                    )
+                for (marker in markers) {
+
+                    val markerX = marker.marker.lat
+                    val markerY = marker.marker.lng
+                    mapView.map.mapObjects.addPlacemark(Point(markerX,markerY), ImageProvider.fromResource(context, R.drawable.search_result))
+                    mapView.map.move(
+                        CameraPosition(point,14.0f,0.0f,0.0f),
+                        Animation(Animation.Type.SMOOTH,0f),
+                        null
+                    )
+                    val circleX = circle.geometry.center.longitude
+                    val circleY = circle.geometry.center.latitude
+                    val radius = circle.geometry.radius
+                    val distance = sqrt((markerX - circleX) * (markerX - circleX) + (markerY - circleY) * (markerY - circleY))
+                    if (distance <= radius) {
+                        val intent = Intent("GEOFENCE_TRIGGERED")
+                        context?.sendBroadcast(intent)
+
+                    }
+                }
+
+            }
+
+
+
+
+
+            }
+        }
+        executor.scheduleAtFixedRate(locationRunnable, 0, 2, TimeUnit.MINUTES)
+
+//        val locationProvider = LocationServices.getFusedLocationProviderClient(requireContext())
+//        locationProvider.lastLocation.addOnSuccessListener { location: Location? ->
+//            if(location != null){
+//                val point = Point(location.latitude,location.longitude)
+//                val GEOFENCE = 100.0
+//                mapView.map.mapObjects.addPlacemark(point,ImageProvider.fromResource(context,R.drawable.search_result))
+//                val circle = mapView.map.mapObjects.addCircle(Circle(Point(location.latitude,location.longitude),GEOFENCE),)
+//
+//                mapView.map.move(
+//                    CameraPosition(point,17.0f,0.0f,0.0f),
+//                Animation(Animation.Type.SMOOTH,0f),
+//                    null
+//                )
+//            }
+//        }
+//        locationManager = ActivityCompat.getSystemService(this.requireContext(),LocationManager::class.java) as LocationManager
+//        val lastLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
+//        if(lastLocation != null){
+//            val lastPoint = Point(lastLocation.latitude,lastLocation.longitude)
+//            mapView.map.move(
+//                CameraPosition(lastPoint, 14.0f, 0.0f,0.0f)
+//            )
+//            mapView.map.mapObjects.addPlacemark(lastPoint)
+//        }
 
     }
 
     override fun onResume() {
         super.onResume()
+
     }
 
     override fun onStop() {
         mapView.onStop()
         MapKitFactory.getInstance().onStop()
         super.onStop()
+
     }
 
     override fun onObjectAdded(userLocationView: UserLocationView) {
@@ -154,14 +268,14 @@ class MapFragment : Fragment(), UserLocationObjectListener, InputListener,
         val pinIcon = userLocationView.pin.useCompositeIcon()
 
 
-        pinIcon.setIcon(
-            "pin",
-            ImageProvider.fromResource(context, R.drawable.search_result),
-            IconStyle().setAnchor(PointF(0.5f, 0.5f))
-                .setRotationType(RotationType.ROTATE)
-                .setZIndex(1f)
-                .setScale(0.5f)
-        )
+//        pinIcon.setIcon(
+//            "pin",
+//            ImageProvider.fromResource(context, R.drawable.search_result),
+//            IconStyle().setAnchor(PointF(0.5f, 0.5f))
+//                .setRotationType(RotationType.ROTATE)
+//                .setZIndex(1f)
+//                .setScale(0.5f)
+//        )
 
     }
 
