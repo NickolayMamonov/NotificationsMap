@@ -24,13 +24,6 @@ class TaskBroadcastReceiver : BroadcastReceiver() {
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setAutoCancel(true)
         notificationManager.notify(0, notificationBuilder.build())
-//        val text = intent?.getStringExtra("text")
-//        val notificationManager = context?.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-//        val notification = NotificationCompat.Builder(context, "default")
-//            .setContentTitle("Task Reminder")
-//            .setContentText(text)
-//            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-//            .build()
-//        notificationManager.notify(0, notification)
+
     }
 }

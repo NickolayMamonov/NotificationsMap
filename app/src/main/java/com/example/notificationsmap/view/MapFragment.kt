@@ -57,7 +57,7 @@ import java.util.concurrent.TimeUnit
 
 
 // Session.SearchListener
-class MapFragment : Fragment(), UserLocationObjectListener, InputListener,
+class MapFragment : Fragment(), InputListener,
     CameraListener,Session.SearchListener {
     private lateinit var viewModel: MapViewModel
 
@@ -91,64 +91,12 @@ class MapFragment : Fragment(), UserLocationObjectListener, InputListener,
         locationMapkit.isVisible = true
 //        locationMapkit = mapkit.createUserLocationLayer(mapView.mapWindow)
 
-        locationMapkit.setObjectListener(this)
         searchManager = SearchFactory.getInstance().createSearchManager(SearchManagerType.COMBINED)
-//        lifecycleScope.launch {
-//            val tasks = viewModel.getAllMarkers()
-//            for (task in tasks) {
-//                if(task.isActive){
-//                    mapView.map.mapObjects.addPlacemark(Point(task.marker.lat, task.marker.lng))
-//                }
-//
-//            }
-//        }
-//        SearchFactory.initialize(this.requireContext())
-//        searchManager = SearchFactory.getInstance().createSearchManager(SearchManagerType.COMBINED)
-//        mapView.map.addCameraListener(this)
-//        searchEdit = binding.searchEdit
-//        searchEdit.setOnEditorActionListener { v, actionId, event ->
-//            if(actionId == EditorInfo.IME_ACTION_SEARCH){
-//                submitQuery(searchEdit.text.toString())
-//            }
-//            false
-//        }
-//        mapkit.createLocationManager().requestSingleUpdate(object : LocationListener {
-//            override fun onLocationUpdated(location: Location) {
-//                mapView.map.move(
-//                    CameraPosition(location.position, 25.0f, 0.0f, 0.0f),
-//                    Animation(Animation.Type.SMOOTH, 5F),
-//                    null
-//                )
-//            }
-//
-//            override fun onLocationStatusUpdated(p0: LocationStatus) {
-//
-//            }
-//        })
-
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         SearchFactory.initialize(context)
-
         super.onCreate(savedInstanceState)
-//        searchManager = SearchFactory.getInstance().createSearchManager(SearchManagerType.COMBINED)
-//
-//        mapView.map.addCameraListener(this)
-//
-//        searchEdit = binding.searchEdit
-//        searchEdit.setOnEditorActionListener { textView, actionId, keyEvent ->
-//            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-//                submitQuery(searchEdit.text.toString())
-//            }
-//            false
-//        }
-//
-//        mapView.map.move(
-//            CameraPosition(Point(59.945933, 30.320045), 14.0f, 0.0f, 0.0f)
-//        )
-//
-//        submitQuery(searchEdit.text.toString())
     }
 
     override fun onStart() {
@@ -191,7 +139,6 @@ class MapFragment : Fragment(), UserLocationObjectListener, InputListener,
                         Color.RED
                     )
                 for (marker in markers) {
-
                     val markerX = marker.marker.lat
                     val markerY = marker.marker.lng
                     mapView.map.mapObjects.addPlacemark(Point(markerX,markerY), ImageProvider.fromResource(context, R.drawable.search_result))
@@ -220,32 +167,6 @@ class MapFragment : Fragment(), UserLocationObjectListener, InputListener,
             }
         }
         executor.scheduleAtFixedRate(locationRunnable, 0, 2, TimeUnit.MINUTES)
-
-//        val locationProvider = LocationServices.getFusedLocationProviderClient(requireContext())
-//        locationProvider.lastLocation.addOnSuccessListener { location: Location? ->
-//            if(location != null){
-//                val point = Point(location.latitude,location.longitude)
-//                val GEOFENCE = 100.0
-//                mapView.map.mapObjects.addPlacemark(point,ImageProvider.fromResource(context,R.drawable.search_result))
-//                val circle = mapView.map.mapObjects.addCircle(Circle(Point(location.latitude,location.longitude),GEOFENCE),)
-//
-//                mapView.map.move(
-//                    CameraPosition(point,17.0f,0.0f,0.0f),
-//                Animation(Animation.Type.SMOOTH,0f),
-//                    null
-//                )
-//            }
-//        }
-//        locationManager = ActivityCompat.getSystemService(this.requireContext(),LocationManager::class.java) as LocationManager
-//        val lastLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
-//        if(lastLocation != null){
-//            val lastPoint = Point(lastLocation.latitude,lastLocation.longitude)
-//            mapView.map.move(
-//                CameraPosition(lastPoint, 14.0f, 0.0f,0.0f)
-//            )
-//            mapView.map.mapObjects.addPlacemark(lastPoint)
-//        }
-
     }
 
     override fun onResume() {
@@ -260,51 +181,11 @@ class MapFragment : Fragment(), UserLocationObjectListener, InputListener,
 
     }
 
-    override fun onObjectAdded(userLocationView: UserLocationView) {
-        locationMapkit.setAnchor(
-            PointF((mapView.width() * 0.5).toFloat(), (mapView.height() * 0.5).toFloat()),
-            PointF((mapView.width() * 0.5).toFloat(), (mapView.height() * 0.5).toFloat())
-        )
-        val pinIcon = userLocationView.pin.useCompositeIcon()
 
-
-//        pinIcon.setIcon(
-//            "pin",
-//            ImageProvider.fromResource(context, R.drawable.search_result),
-//            IconStyle().setAnchor(PointF(0.5f, 0.5f))
-//                .setRotationType(RotationType.ROTATE)
-//                .setZIndex(1f)
-//                .setScale(0.5f)
-//        )
-
-    }
-
-    override fun onObjectRemoved(p0: UserLocationView) {
-
-    }
-
-    override fun onObjectUpdated(p0: UserLocationView, p1: ObjectEvent) {
-
-    }
 
     override fun onMapTap(map: Map, point: Point) {
-//        binding.btnAdd.visibility = View.VISIBLE
-//        setFragmentResult("mapPoint",Bundle().apply {
-//            putDouble("latitude",latitude)
-//            putDouble("longitude",longitude)
-//        })
         sharedViewModel.latCoord.value = point.latitude.toString()
-
         sharedViewModel.lngCoord.value = point.longitude.toString()
-//        binding.btnAdd.setOnClickListener {
-////            createTaskViewModel.latCoord.value = point.latitude
-////            createTaskViewModel.lngCoord.value = point.longitude
-//            findNavController().navigate(R.id.action_mainFragment_to_createTaskFragment)
-//        }
-//        val marker = MarkerEntity.from(point.latitude, point.longitude)
-//        viewModel.insertMarkerPos(marker)
-//        mapView.map.mapObjects.addPlacemark(Point(marker.lat, marker.lng))
-
     }
 
     override fun onMapLongTap(p0: Map, p1: Point) {
@@ -320,25 +201,6 @@ class MapFragment : Fragment(), UserLocationObjectListener, InputListener,
         )
     }
 
-//    override fun onSearchResponse(response: Response) {
-////        val mapObjects:MapObjectCollection = mapView.map.mapObjects
-////        mapObjects.clear()
-//        for(searchResult in response.collection.children){
-//            val resultLocation = searchResult.obj?.geometry?.get(0)?.point
-//            resultLocation?.let { CameraPosition(it, 25.0f, 0.0f, 0.0f) }?.let {
-////                mapView.map.move(
-////                    it,
-////                    Animation(Animation.Type.SMOOTH, 5F),
-////                    null
-////                )
-//            }
-//            //resultLocation?.let { mapObjects.addPlacemark(it, ImageProvider.fromResource(this.context,R.drawable.pin)) }
-//        }
-//    }
-//
-//    override fun onSearchError(p0: Error) {
-//
-//    }
 //
     override fun onCameraPositionChanged(
         map: Map,
