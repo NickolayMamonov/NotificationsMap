@@ -166,7 +166,7 @@ class MapFragment : Fragment(), InputListener,
 
             }
         }
-        executor.scheduleAtFixedRate(locationRunnable, 0, 2, TimeUnit.MINUTES)
+        executor.scheduleAtFixedRate(locationRunnable, 0, 1, TimeUnit.MINUTES)
     }
 
     override fun onResume() {

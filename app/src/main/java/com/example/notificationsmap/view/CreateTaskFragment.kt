@@ -2,31 +2,23 @@ package com.example.notificationsmap.view
 
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.DatePicker
 import android.widget.TextView
-import android.widget.Toast
 import androidx.fragment.app.*
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.notificationsmap.CreateTaskViewModel
-import com.example.notificationsmap.NotificationService
 
 import com.example.notificationsmap.R
 import com.example.notificationsmap.SharedViewModel
 import com.example.notificationsmap.data.entities.ActiveTaskEntity
 import com.example.notificationsmap.data.entities.MarkerEntity
 import com.example.notificationsmap.databinding.FragmentCreateTaskBinding
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import java.util.Calendar
-import kotlin.math.ln
 
 
 class CreateTaskFragment : Fragment() {
