@@ -35,14 +35,6 @@ class NotificationService: Service() {
         val markerDao = MarkerDatabase.getDatabase(application).markerDao()
         repo = TaskRepo(markerDao)
 
-        notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
-            val notificationChannel = NotificationChannel("NotificationServiceChannel","Notification Service Channel", NotificationManager.IMPORTANCE_DEFAULT)
-            notificationManager.createNotificationChannel(notificationChannel)
-        }
-
-
-        startForeground(1,buildNotification("Сервис запущен!", ""))
 
 
     }
@@ -58,6 +50,14 @@ class NotificationService: Service() {
                 android.Manifest.permission.ACCESS_BACKGROUND_LOCATION) != PackageManager.PERMISSION_GRANTED){
             return START_NOT_STICKY
         }
+        notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+            val notificationChannel = NotificationChannel("NotificationServiceChannel","Notification Service Channel", NotificationManager.IMPORTANCE_DEFAULT)
+            notificationManager.createNotificationChannel(notificationChannel)
+        }
+
+
+        startForeground(1,buildNotification("Сервис запущен!", ""))
 
         val locationManager = this.getSystemService(Context.LOCATION_SERVICE) as LocationManager
         val locationListener = LocationListener { location ->
@@ -70,38 +70,6 @@ class NotificationService: Service() {
 
         return START_STICKY
     }
-
-//    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-//       if( ActivityCompat.checkSelfPermission(
-//               this,
-//               android.Manifest.permission.ACCESS_FINE_LOCATION
-//           ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-//               this,
-//               android.Manifest.permission.ACCESS_COARSE_LOCATION
-//           ) != PackageManager.PERMISSION_GRANTED){
-//           return START_NOT_STICKY
-//       }
-//
-//        val locationManager = this.getSystemService(Context.LOCATION_SERVICE) as LocationManager
-//        val locationListener = LocationListener { location ->
-//            CoroutineScope(Dispatchers.Main).launch{
-//                updateMarkerTasks(location)
-//            }
-//        }
-//
-//        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,60000,10,locationListener)
-//
-//
-////        val executor = Executors.newSingleThreadScheduledExecutor()
-////        val locationRunnable = Runnable {
-////            CoroutineScope(Dispatchers.Main).launch{
-////                val lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
-////                updateMarkerTasks(lastKnownLocation)
-////            }
-////        }
-////        executor.scheduleAtFixedRate(locationRunnable, 0, 1, TimeUnit.MINUTES)
-//        return START_STICKY
-//    }
 
     override fun onDestroy() {
         super.onDestroy()

@@ -9,10 +9,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.Manifest
 import android.app.PendingIntent
+import android.app.Service
 import android.content.Intent
 import android.content.IntentFilter
 import android.graphics.Color
 import android.location.Location
+import android.location.LocationListener
 import android.widget.EditText
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
@@ -40,6 +42,8 @@ import com.yandex.runtime.Error
 import com.yandex.runtime.image.ImageProvider
 import com.yandex.runtime.network.NetworkError
 import com.yandex.runtime.network.RemoteError
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 
@@ -100,28 +104,33 @@ class MapFragment : Fragment(), InputListener,
 
         mapView.map.addInputListener(this)
         val locationManager = requireContext().getSystemService(Context.LOCATION_SERVICE) as LocationManager
-        if (ActivityCompat.checkSelfPermission(
+        if( ActivityCompat.checkSelfPermission(
                 this.requireContext(),
-                Manifest.permission.ACCESS_FINE_LOCATION
+                android.Manifest.permission.ACCESS_FINE_LOCATION
             ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
                 this.requireContext(),
-                Manifest.permission.ACCESS_COARSE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED
-        ){
-            val permissions = arrayOf(
-                Manifest.permission.ACCESS_FINE_LOCATION,
-                Manifest.permission.ACCESS_COARSE_LOCATION
-            )
-            ActivityCompat.requestPermissions(this.requireActivity(), permissions, 0)
-        }
-        val executor = Executors.newSingleThreadScheduledExecutor()
-        val locationRunnable = Runnable {
-            lifecycleScope.launch{
-                val lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
-                updateMarkerTasks(lastKnownLocation)
+                android.Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                this.requireContext(),
+                Manifest.permission.ACCESS_BACKGROUND_LOCATION) != PackageManager.PERMISSION_GRANTED){
+            val locationListener = LocationListener { location ->
+                CoroutineScope(Dispatchers.Main).launch{
+                    updateMarkerTasks(location)
+                }
             }
+
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,60000,0f,locationListener)
+
+//            val executor = Executors.newSingleThreadScheduledExecutor()
+//            val locationRunnable = Runnable {
+//                lifecycleScope.launch{
+//                    val lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
+//                    updateMarkerTasks(lastKnownLocation)
+//                }
+//            }
+//            executor.scheduleAtFixedRate(locationRunnable, 0, 1, TimeUnit.MINUTES)
         }
-        executor.scheduleAtFixedRate(locationRunnable, 0, 1, TimeUnit.MINUTES)
+
     }
 
     private suspend fun updateMarkerTasks(lastKnownLocation: Location?) {
@@ -129,7 +138,7 @@ class MapFragment : Fragment(), InputListener,
         if(lastKnownLocation != null){
             val point = Point(lastKnownLocation.latitude,lastKnownLocation.longitude)
             mapView.map.mapObjects.clear()
-            mapView.map.mapObjects.addPlacemark(point, ImageProvider.fromResource(context,R.drawable.search_result))
+//            mapView.map.mapObjects.addPlacemark(point, ImageProvider.fromResource(context,R.drawable.search_result))
             mapView.map.mapObjects.addCircle(
                 Circle(point, 100.0f),
                 Color.BLUE,
