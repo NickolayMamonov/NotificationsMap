@@ -37,9 +37,7 @@ class NotificationService: Service() {
         notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
             val notificationChannel = NotificationChannel("NotificationServiceChannel","Notification Service Channel", NotificationManager.IMPORTANCE_DEFAULT)
-            val notificationChannel2 = NotificationChannel("NotificationServiceChannel2","Notification Service Channel2", NotificationManager.IMPORTANCE_DEFAULT)
             notificationManager.createNotificationChannel(notificationChannel)
-            notificationManager.createNotificationChannel(notificationChannel2)
         }
 
 
