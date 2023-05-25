@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
+import android.location.LocationListener
 import android.location.LocationManager
 import android.os.Build
 import android.os.IBinder
@@ -45,27 +46,62 @@ class NotificationService: Service() {
 
 
     }
-
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        ActivityCompat.checkSelfPermission(
-            this,
-            android.Manifest.permission.ACCESS_FINE_LOCATION
-        ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-            this,
-            android.Manifest.permission.ACCESS_COARSE_LOCATION
-        ) != PackageManager.PERMISSION_GRANTED
+        if( ActivityCompat.checkSelfPermission(
+                this,
+                android.Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                this,
+                android.Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                this,
+                android.Manifest.permission.ACCESS_BACKGROUND_LOCATION) != PackageManager.PERMISSION_GRANTED){
+            return START_NOT_STICKY
+        }
 
         val locationManager = this.getSystemService(Context.LOCATION_SERVICE) as LocationManager
-        val executor = Executors.newSingleThreadScheduledExecutor()
-        val locationRunnable = Runnable {
+        val locationListener = LocationListener { location ->
             CoroutineScope(Dispatchers.Main).launch{
-                val lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
-                updateMarkerTasks(lastKnownLocation)
+                updateMarkerTasks(location)
             }
         }
-        executor.scheduleAtFixedRate(locationRunnable, 0, 1, TimeUnit.MINUTES)
+
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,60000,0f,locationListener)
+
         return START_STICKY
     }
+
+//    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+//       if( ActivityCompat.checkSelfPermission(
+//               this,
+//               android.Manifest.permission.ACCESS_FINE_LOCATION
+//           ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+//               this,
+//               android.Manifest.permission.ACCESS_COARSE_LOCATION
+//           ) != PackageManager.PERMISSION_GRANTED){
+//           return START_NOT_STICKY
+//       }
+//
+//        val locationManager = this.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+//        val locationListener = LocationListener { location ->
+//            CoroutineScope(Dispatchers.Main).launch{
+//                updateMarkerTasks(location)
+//            }
+//        }
+//
+//        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,60000,10,locationListener)
+//
+//
+////        val executor = Executors.newSingleThreadScheduledExecutor()
+////        val locationRunnable = Runnable {
+////            CoroutineScope(Dispatchers.Main).launch{
+////                val lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
+////                updateMarkerTasks(lastKnownLocation)
+////            }
+////        }
+////        executor.scheduleAtFixedRate(locationRunnable, 0, 1, TimeUnit.MINUTES)
+//        return START_STICKY
+//    }
 
     override fun onDestroy() {
         super.onDestroy()
@@ -73,6 +109,7 @@ class NotificationService: Service() {
     }
     private suspend fun updateMarkerTasks(lastKnownLocation: Location?) {
         val markers = repo.getAllTasks()
+
         if(lastKnownLocation != null){
             for (marker in markers) {
                 val markerX = marker.marker.lat
@@ -81,7 +118,7 @@ class NotificationService: Service() {
                 val circleY = lastKnownLocation.longitude
                 val isInside = isPointInside(markerX,markerY,circleX,circleY)
                 if (isInside) {
-                    notificationManager.notify(2,buildNotification("Текст","Описание"))
+                    notificationManager.notify(2,buildNotification(marker.name,marker.marker.desc))
                     Toast.makeText(this,"Попал", Toast.LENGTH_LONG).show()
                 }
             }
