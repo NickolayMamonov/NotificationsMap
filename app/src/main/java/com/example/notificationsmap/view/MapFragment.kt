@@ -2,58 +2,50 @@ package com.example.notificationsmap.view
 
 import android.content.Context
 import android.content.pm.PackageManager
-import android.graphics.PointF
 import android.location.LocationManager
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.Manifest
+import android.app.PendingIntent
 import android.content.Intent
 import android.content.IntentFilter
 import android.graphics.Color
 import android.location.Location
-import android.location.LocationListener
-import android.util.Log
-import android.view.inputmethod.EditorInfo
 import android.widget.EditText
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat.getSystemService
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
-import com.example.notificationsmap.MapViewModel
-import com.example.notificationsmap.R
-import com.example.notificationsmap.SharedViewModel
-import com.example.notificationsmap.TaskBroadcastReceiver
+import com.example.notificationsmap.*
 import com.example.notificationsmap.databinding.FragmentMapBinding
+import com.google.android.gms.location.GeofencingClient
 import com.google.android.gms.location.LocationServices
 import com.yandex.mapkit.Animation
 import com.yandex.mapkit.MapKit
 import com.yandex.mapkit.MapKitFactory
 import com.yandex.mapkit.geometry.Circle
 import com.yandex.mapkit.geometry.Point
-import com.yandex.mapkit.geometry.Polyline
-import com.yandex.mapkit.layers.ObjectEvent
 
 import com.yandex.mapkit.map.*
 import com.yandex.mapkit.map.Map
 import com.yandex.mapkit.mapview.MapView
 import com.yandex.mapkit.search.*
 import com.yandex.mapkit.user_location.UserLocationLayer
-import com.yandex.mapkit.user_location.UserLocationObjectListener
-import com.yandex.mapkit.user_location.UserLocationView
 import com.yandex.runtime.Error
 import com.yandex.runtime.image.ImageProvider
 import com.yandex.runtime.network.NetworkError
 import com.yandex.runtime.network.RemoteError
 import kotlinx.coroutines.launch
-import java.lang.Math.sqrt
+
 
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
+import kotlin.math.cos
 
 
 // Session.SearchListener
@@ -97,15 +89,15 @@ class MapFragment : Fragment(), InputListener,
     override fun onCreate(savedInstanceState: Bundle?) {
         SearchFactory.initialize(context)
         super.onCreate(savedInstanceState)
+
+
     }
 
     override fun onStart() {
         mapView.onStart()
         MapKitFactory.getInstance().onStart()
         super.onStart()
-        val taskBroadcastReceiver = TaskBroadcastReceiver()
-        val intentFilter = IntentFilter("GEOFENCE_TRIGGERED")
-        requireContext().registerReceiver(taskBroadcastReceiver,intentFilter)
+
         mapView.map.addInputListener(this)
         val locationManager = requireContext().getSystemService(Context.LOCATION_SERVICE) as LocationManager
         if (ActivityCompat.checkSelfPermission(
@@ -125,48 +117,60 @@ class MapFragment : Fragment(), InputListener,
         val executor = Executors.newSingleThreadScheduledExecutor()
         val locationRunnable = Runnable {
             lifecycleScope.launch{
-                val markers = viewModel.getAllMarkers()
                 val lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
-                if(lastKnownLocation != null){
-                    val point = Point(lastKnownLocation.latitude,lastKnownLocation.longitude)
-                    mapView.map.mapObjects.clear()
-                    mapView.map.mapObjects.addPlacemark(point, ImageProvider.fromResource(context,R.drawable.search_result))
-
-                    val circle = mapView.map.mapObjects.addCircle(
-                        Circle(point, 100.0f),
-                        Color.GREEN,
-                        2.0f,
-                        Color.RED
-                    )
-                for (marker in markers) {
-                    val markerX = marker.marker.lat
-                    val markerY = marker.marker.lng
-                    mapView.map.mapObjects.addPlacemark(Point(markerX,markerY), ImageProvider.fromResource(context, R.drawable.search_result))
-                    mapView.map.move(
-                        CameraPosition(point,14.0f,0.0f,0.0f),
-                        Animation(Animation.Type.SMOOTH,0f),
-                        null
-                    )
-                    val circleX = circle.geometry.center.longitude
-                    val circleY = circle.geometry.center.latitude
-                    val radius = circle.geometry.radius
-                    val distance = sqrt((markerX - circleX) * (markerX - circleX) + (markerY - circleY) * (markerY - circleY))
-                    if (distance <= radius) {
-                        val intent = Intent("GEOFENCE_TRIGGERED")
-                        context?.sendBroadcast(intent)
-
-                    }
-                }
-
-            }
-
-
-
-
-
+                updateMarkerTasks(lastKnownLocation)
             }
         }
         executor.scheduleAtFixedRate(locationRunnable, 0, 1, TimeUnit.MINUTES)
+    }
+
+    private suspend fun updateMarkerTasks(lastKnownLocation: Location?) {
+        val markers = viewModel.getAllMarkers()
+        if(lastKnownLocation != null){
+            val point = Point(lastKnownLocation.latitude,lastKnownLocation.longitude)
+            mapView.map.mapObjects.clear()
+            mapView.map.mapObjects.addPlacemark(point, ImageProvider.fromResource(context,R.drawable.search_result))
+
+            val circle = mapView.map.mapObjects.addCircle(
+                Circle(point, 100.0f),
+                Color.BLUE,
+                2.0f,
+                Color.GREEN
+            )
+            for (marker in markers) {
+                val markerX = marker.marker.lat
+                val markerY = marker.marker.lng
+                mapView.map.mapObjects.addPlacemark(Point(markerX,markerY), ImageProvider.fromResource(context, R.drawable.search_result))
+                mapView.map.move(
+                    CameraPosition(point,14.0f,0.0f,0.0f),
+                    Animation(Animation.Type.SMOOTH,0f),
+                    null
+                )
+                val circleX = circle.geometry.center.latitude
+                val circleY = circle.geometry.center.longitude
+                val isInside = isPointInside(markerX,markerY,circleX,circleY)
+                if (isInside) {
+                    Toast.makeText(context,"Попал",Toast.LENGTH_LONG).show()
+                    val intent = Intent("com.example.myapp.MY_ACTION")
+                    context?.sendBroadcast(intent)
+                }
+            }
+
+        }
+    }
+
+    private fun isPointInside(
+        markerX: Double,
+        markerY: Double,
+        circleX: Double,
+        circleY: Double,
+        ): Boolean {
+        if ((markerX - circleX) * (markerX - circleX) + (markerY - circleY) * (markerY - circleY) <= 0.0009000009){
+            return true
+        } else {
+            return false
+        }
+
     }
 
     override fun onResume() {

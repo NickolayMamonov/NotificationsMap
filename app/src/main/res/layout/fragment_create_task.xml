@@ -71,7 +71,7 @@
         app:layout_constraintTop_toBottomOf="@+id/new_task_text" />
 
     <TextView
-        android:id="@+id/time_arrival_txt"
+        android:id="@+id/time_txt"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="14dp"
@@ -84,7 +84,7 @@
         app:layout_constraintTop_toBottomOf="@+id/name_txt" />
 
     <EditText
-        android:id="@+id/time_arrival_picker"
+        android:id="@+id/time_picker"
         android:layout_width="210dp"
         android:layout_height="48dp"
         android:layout_marginTop="16dp"
@@ -93,11 +93,11 @@
         android:inputType="text"
         android:textColor="@color/black"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/time_arrival_txt"
+        app:layout_constraintStart_toEndOf="@+id/time_txt"
         app:layout_constraintTop_toBottomOf="@+id/name" />
 
     <TextView
-        android:id="@+id/date_arrival_txt"
+        android:id="@+id/date_txt"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="14dp"
@@ -107,10 +107,10 @@
         android:textColor="@color/black"
         android:textSize="18sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/time_arrival_txt" />
+        app:layout_constraintTop_toBottomOf="@+id/time_txt" />
 
     <EditText
-        android:id="@+id/date_arrival_picker"
+        android:id="@+id/date_picker"
         android:layout_width="225dp"
         android:layout_height="48dp"
         android:layout_marginTop="15dp"
@@ -118,59 +118,9 @@
         android:importantForAutofill="no"
         android:inputType="text"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/date_arrival_txt"
-        app:layout_constraintTop_toBottomOf="@id/time_arrival_picker" />
+        app:layout_constraintStart_toEndOf="@+id/date_txt"
+        app:layout_constraintTop_toBottomOf="@id/time_picker" />
 
-    <TextView
-        android:id="@+id/time_remember_txt"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="14dp"
-        android:layout_marginTop="40dp"
-        android:fontFamily="@font/roboto"
-        android:text="Время напоминания:"
-        android:textColor="@color/black"
-        android:textSize="18sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/date_arrival_txt" />
-
-    <EditText
-        android:id="@+id/time_remember_picker"
-        android:layout_width="180dp"
-        android:layout_height="48dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="10dp"
-        android:importantForAutofill="no"
-        android:inputType="text"
-        android:textColor="@color/black"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/time_remember_txt"
-        app:layout_constraintTop_toBottomOf="@+id/date_arrival_picker" />
-
-    <TextView
-        android:id="@+id/date_remember_txt"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="14dp"
-        android:layout_marginTop="40dp"
-        android:fontFamily="@font/roboto"
-        android:text="Дата напоминания:"
-        android:textColor="@color/black"
-        android:textSize="18sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/time_remember_txt" />
-
-    <EditText
-        android:id="@+id/date_remember_picker"
-        android:layout_width="190dp"
-        android:layout_height="48dp"
-        android:layout_marginTop="15dp"
-        android:layout_marginEnd="10dp"
-        android:importantForAutofill="no"
-        android:inputType="text"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/date_remember_txt"
-        app:layout_constraintTop_toBottomOf="@id/time_remember_picker" />
 
     <TextView
         android:id="@+id/address_txt"
@@ -183,7 +133,7 @@
         android:textColor="@color/black"
         android:textSize="18sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/date_remember_txt" />
+        app:layout_constraintTop_toBottomOf="@+id/date_txt" />
 
     <TextView
         android:id="@+id/address"
@@ -198,7 +148,7 @@
         android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/address_txt"
-        app:layout_constraintTop_toBottomOf="@+id/date_remember_picker" />
+        app:layout_constraintTop_toBottomOf="@+id/date_picker" />
 
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"

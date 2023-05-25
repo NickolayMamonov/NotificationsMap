@@ -27,7 +27,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/arrival_time"
+            android:id="@+id/time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="@font/roboto"
@@ -41,7 +41,7 @@
             app:layout_constraintTop_toBottomOf="@+id/name" />
 
         <TextView
-            android:id="@+id/arrival_date"
+            android:id="@+id/date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="@font/roboto"
@@ -51,34 +51,7 @@
             android:layout_marginTop="2dp"
             android:layout_marginStart="13dp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/arrival_time" />
-
-        <TextView
-            android:id="@+id/remember_time"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/roboto"
-            android:text="Время напоминания"
-            android:textColor="@color/black"
-            android:textSize="14sp"
-            android:layout_marginTop="2dp"
-            android:layout_marginStart="13dp"
-            app:layout_constraintStart_toEndOf="@+id/switch_check"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/arrival_date" />
-
-        <TextView
-            android:id="@+id/remember_date"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/roboto"
-            android:text="Дата напоминания"
-            android:textColor="@color/black"
-            android:textSize="14sp"
-            android:layout_marginTop="2dp"
-            android:layout_marginStart="13dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/remember_time" />
+            app:layout_constraintTop_toBottomOf="@+id/time" />
 
         <TextView
             android:id="@+id/address"
@@ -92,7 +65,7 @@
             android:layout_marginStart="13dp"
             android:layout_marginEnd="7dp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/remember_date" />
+            app:layout_constraintTop_toBottomOf="@+id/date" />
 
         <androidx.appcompat.widget.SwitchCompat
             android:id="@+id/switch_check"

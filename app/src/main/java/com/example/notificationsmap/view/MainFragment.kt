@@ -29,12 +29,6 @@ class MainFragment : Fragment() {
             replace(R.id.content, nhf)
         }
         binding.btnAdd.setOnClickListener {
-
-//            childFragmentManager.commit {
-//                replace(R.id.fragmentContainer,CreateTaskFragment())
-//
-//            }
-
             findNavController().navigate(R.id.action_mainFragment_to_createTaskFragment)
         }
         binding.navbar.setOnItemSelectedListener { item ->

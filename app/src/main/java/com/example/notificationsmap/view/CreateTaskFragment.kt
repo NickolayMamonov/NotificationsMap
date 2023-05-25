@@ -23,9 +23,7 @@ import java.util.Calendar
 
 class CreateTaskFragment : Fragment() {
     private lateinit var binding : FragmentCreateTaskBinding
-
     private val createTaskViewModel: CreateTaskViewModel by viewModels( { requireActivity() })
-//    private lateinit var sharedViewModel: SharedViewModel
     private val sharedViewModel: SharedViewModel by activityViewModels()
     private lateinit var lat : String
     private lateinit var lng : String
@@ -37,31 +35,16 @@ class CreateTaskFragment : Fragment() {
         binding = FragmentCreateTaskBinding.inflate(inflater)
         val calendar = Calendar.getInstance()
 
-        binding.timeArrivalPicker.setOnClickListener {
-            showTimePickerDialog(binding.timeArrivalPicker,calendar)
+        binding.timePicker.setOnClickListener {
+            showTimePickerDialog(binding.timePicker,calendar)
         }
-        binding.dateArrivalPicker.setOnClickListener {
-            showDatePickerDialog(binding.dateArrivalPicker,calendar)
+        binding.datePicker.setOnClickListener {
+            showDatePickerDialog(binding.datePicker,calendar)
         }
-        binding.timeRememberPicker.setOnClickListener {
-            showTimePickerDialog(binding.timeRememberPicker,calendar)
-        }
-        binding.dateRememberPicker.setOnClickListener {
-            showDatePickerDialog(binding.dateRememberPicker,calendar)
-        }
+
         return binding.root
     }
 
-//    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-//        super.onViewCreated(view, savedInstanceState)
-//        sharedViewModel.latCoord.observe(viewLifecycleOwner){latCoord ->
-//            binding.address.text = latCoord
-//        }
-//        sharedViewModel.lngCoord.observe(viewLifecycleOwner){lngCoord ->
-//            binding.address.text = text
-//        }
-//
-//    }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         sharedViewModel.latCoord.observe(viewLifecycleOwner){latCoord ->
@@ -78,10 +61,8 @@ class CreateTaskFragment : Fragment() {
         lifecycleScope.launch{
             binding.acceptBtn.setOnClickListener {
                 val marker = MarkerEntity.from(
-                    time_arrival = binding.timeArrivalPicker.text.toString(),
-                    date_arrival = binding.dateArrivalPicker.text.toString(),
-                    time_remember = binding.timeRememberPicker.text.toString(),
-                    date_remember = binding.dateRememberPicker.text.toString(),
+                    time = binding.timePicker.text.toString(),
+                    date = binding.datePicker.text.toString(),
                     address = binding.address.text.toString(),
                     desc = binding.description.text.toString(),
                     lat = lat.toDouble(),
@@ -93,10 +74,6 @@ class CreateTaskFragment : Fragment() {
                     marker = marker
                 )
                 createTaskViewModel.insertMarkerPos(task)
-
-//                val serviceIntent = Intent(this, NotificationService::class.java)
-//                startService(serviceIntent)
-
                 findNavController().navigate(R.id.action_createTaskFragment_to_mapFragment)
             }
             binding.cancelBtn.setOnClickListener {

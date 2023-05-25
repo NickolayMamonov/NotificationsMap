@@ -25,10 +25,9 @@ class TasksAdapter(private var taskList: List<ActiveTaskEntity>): RecyclerView.A
         val task = taskList[position]
         holder.name.text = task.name
         holder.isActive.isChecked = task.isActive
-        holder.arrival_time.text = task.marker.time_arrival
-        holder.arrival_date.text = task.marker.date_arrival
-        holder.remember_time.text = task.marker.time_remember
-        holder.remember_date.text =task.marker.date_remember
+        holder.time.text = task.marker.time
+        holder.date.text = task.marker.date
+
         holder.address.text = "${task.marker.lat} , ${task.marker.lng}"
 
     }
@@ -46,10 +45,8 @@ class TasksAdapter(private var taskList: List<ActiveTaskEntity>): RecyclerView.A
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         var name : TextView = itemView.findViewById(R.id.name)
         var isActive : SwitchCompat = itemView.findViewById(R.id.switch_check)
-        var arrival_time : TextView = itemView.findViewById(R.id.arrival_time)
-        var arrival_date : TextView = itemView.findViewById(R.id.arrival_date)
-        var remember_time : TextView = itemView.findViewById(R.id.remember_time)
-        var remember_date : TextView = itemView.findViewById(R.id.remember_date)
+        var time : TextView = itemView.findViewById(R.id.time)
+        var date : TextView = itemView.findViewById(R.id.date)
         var address : TextView = itemView.findViewById(R.id.address)
 
     }

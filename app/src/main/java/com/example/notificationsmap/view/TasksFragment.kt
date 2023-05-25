@@ -41,12 +41,6 @@ class TasksFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-//        val markerDao = MarkerDatabase.getDatabase(requireContext()).markerDao()
-//
-//        val markerList = markerDao.getAllMarkers()
-//        taskAdapter = TasksAdapter(markerList)
-//        binding.recycleview.adapter = taskAdapter
-
     }
 
 }

@@ -5,7 +5,7 @@ import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-@Entity(tableName = "Tasks")
+@Entity(tableName = "Taskstest")
 data class ActiveTaskEntity(
     @PrimaryKey(autoGenerate = true) val id: Long ?= null,
     @ColumnInfo(name = "name") val name: String,
