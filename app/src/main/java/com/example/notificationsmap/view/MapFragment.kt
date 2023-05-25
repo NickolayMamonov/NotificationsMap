@@ -130,8 +130,7 @@ class MapFragment : Fragment(), InputListener,
             val point = Point(lastKnownLocation.latitude,lastKnownLocation.longitude)
             mapView.map.mapObjects.clear()
             mapView.map.mapObjects.addPlacemark(point, ImageProvider.fromResource(context,R.drawable.search_result))
-
-            val circle = mapView.map.mapObjects.addCircle(
+            mapView.map.mapObjects.addCircle(
                 Circle(point, 100.0f),
                 Color.BLUE,
                 2.0f,
@@ -146,32 +145,12 @@ class MapFragment : Fragment(), InputListener,
                     Animation(Animation.Type.SMOOTH,0f),
                     null
                 )
-                val circleX = circle.geometry.center.latitude
-                val circleY = circle.geometry.center.longitude
-                val isInside = isPointInside(markerX,markerY,circleX,circleY)
-                if (isInside) {
-                    Toast.makeText(context,"Попал",Toast.LENGTH_LONG).show()
-                    val intent = Intent("com.example.myapp.MY_ACTION")
-                    context?.sendBroadcast(intent)
-                }
+
             }
 
         }
     }
 
-    private fun isPointInside(
-        markerX: Double,
-        markerY: Double,
-        circleX: Double,
-        circleY: Double,
-        ): Boolean {
-        if ((markerX - circleX) * (markerX - circleX) + (markerY - circleY) * (markerY - circleY) <= 0.0009000009){
-            return true
-        } else {
-            return false
-        }
-
-    }
 
     override fun onResume() {
         super.onResume()
