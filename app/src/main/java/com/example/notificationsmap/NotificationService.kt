@@ -71,7 +71,7 @@ class NotificationService: Service() {
 
     override fun onDestroy() {
         super.onDestroy()
-
+        notificationManager.cancel(1)
     }
     private suspend fun updateMarkerTasks(lastKnownLocation: Location?) {
         val markers = repo.getAllTasks()
@@ -91,7 +91,7 @@ class NotificationService: Service() {
         }
     }
     private fun buildNotification(title: String, text: String): Notification {
-        // Строим уведомление с помощью NotificationCompat.Builder
+
         val notification = NotificationCompat.Builder(this, "NotificationServiceChannel")
             .setContentTitle(title)
             .setContentText(text)
@@ -100,7 +100,6 @@ class NotificationService: Service() {
             .setAutoCancel(true)
             .build()
 
-        // Возвращаем готовое уведомление
         return notification
     }
     private fun isPointInside(
