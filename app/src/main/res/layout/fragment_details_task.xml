@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".view.CreateTaskFragment">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".view.DetailsTaskFragment">
 
     <ImageView
         android:id="@+id/cancel_btn"
@@ -19,13 +19,13 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/new_task_text"
+        android:id="@+id/change_task_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="27dp"
         android:fontFamily="@font/roboto"
         android:gravity="center_horizontal"
-        android:text="@string/new_task"
+        android:text="Изменение задачи"
         android:textColor="@color/black"
         android:textSize="18sp"
         app:layout_constraintEnd_toStartOf="@+id/accept_btn"
@@ -70,7 +70,7 @@
         android:textColor="@color/black"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/name_txt"
-        app:layout_constraintTop_toBottomOf="@+id/new_task_text"
+        app:layout_constraintTop_toBottomOf="@+id/change_task_text"
         tools:ignore="LabelFor" />
 
     <TextView
@@ -89,6 +89,7 @@
         app:layout_constraintTop_toBottomOf="@+id/name_txt" />
 
     <androidx.cardview.widget.CardView
+        android:id="@+id/desc"
         android:layout_width="match_parent"
         android:layout_height="150dp"
         android:layout_marginHorizontal="10dp"
@@ -112,7 +113,17 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/address_txt" />
     </androidx.cardview.widget.CardView>
-
-
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="15dp"
+        android:layout_marginVertical="8dp"
+        android:background="@drawable/ovalbutton"
+        android:text="Удалить задачу"
+        android:fontFamily="@font/roboto_medium"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toBottomOf="@+id/desc"
+        app:layout_constraintStart_toStartOf="parent"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

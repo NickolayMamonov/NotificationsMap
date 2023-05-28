@@ -9,7 +9,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.Manifest
 import android.app.PendingIntent
-import android.app.Service
 import android.content.Intent
 import android.content.IntentFilter
 import android.graphics.Color
@@ -23,6 +22,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.viewmodel.CreationExtras
 import com.example.notificationsmap.*
 import com.example.notificationsmap.databinding.FragmentMapBinding
 import com.google.android.gms.location.GeofencingClient
@@ -32,12 +32,15 @@ import com.yandex.mapkit.MapKit
 import com.yandex.mapkit.MapKitFactory
 import com.yandex.mapkit.geometry.Circle
 import com.yandex.mapkit.geometry.Point
+import com.yandex.mapkit.layers.ObjectEvent
 
 import com.yandex.mapkit.map.*
 import com.yandex.mapkit.map.Map
 import com.yandex.mapkit.mapview.MapView
 import com.yandex.mapkit.search.*
 import com.yandex.mapkit.user_location.UserLocationLayer
+import com.yandex.mapkit.user_location.UserLocationObjectListener
+import com.yandex.mapkit.user_location.UserLocationView
 import com.yandex.runtime.Error
 import com.yandex.runtime.image.ImageProvider
 import com.yandex.runtime.network.NetworkError
@@ -52,7 +55,6 @@ import java.util.concurrent.TimeUnit
 import kotlin.math.cos
 
 
-// Session.SearchListener
 class MapFragment : Fragment(), InputListener,
     CameraListener,Session.SearchListener {
     private lateinit var viewModel: MapViewModel
@@ -83,6 +85,7 @@ class MapFragment : Fragment(), InputListener,
         mapView = binding.mapview
         val mapkit: MapKit = MapKitFactory.getInstance()
         locationMapkit = mapkit.createUserLocationLayer(mapView.mapWindow)
+
 //        mapView.map.move(CameraPosition(Point(0.0, 0.0), 14f, 0f, 0f))
         locationMapkit.isVisible = true
 //        locationMapkit = mapkit.createUserLocationLayer(mapView.mapWindow)
@@ -101,36 +104,28 @@ class MapFragment : Fragment(), InputListener,
         mapView.onStart()
         MapKitFactory.getInstance().onStart()
         super.onStart()
-
         mapView.map.addInputListener(this)
-        val locationManager = requireContext().getSystemService(Context.LOCATION_SERVICE) as LocationManager
-        if( ActivityCompat.checkSelfPermission(
+        locationManager = requireContext().getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        if (ActivityCompat.checkSelfPermission(
                 this.requireContext(),
-                android.Manifest.permission.ACCESS_FINE_LOCATION
+                Manifest.permission.ACCESS_FINE_LOCATION
             ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
                 this.requireContext(),
-                android.Manifest.permission.ACCESS_COARSE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                this.requireContext(),
-                Manifest.permission.ACCESS_BACKGROUND_LOCATION) != PackageManager.PERMISSION_GRANTED){
-            val locationListener = LocationListener { location ->
-                CoroutineScope(Dispatchers.Main).launch{
-                    updateMarkerTasks(location)
-                }
-            }
-
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,60000,0f,locationListener)
-
-//            val executor = Executors.newSingleThreadScheduledExecutor()
-//            val locationRunnable = Runnable {
-//                lifecycleScope.launch{
-//                    val lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
-//                    updateMarkerTasks(lastKnownLocation)
-//                }
-//            }
-//            executor.scheduleAtFixedRate(locationRunnable, 0, 1, TimeUnit.MINUTES)
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ){
+            val permissions = arrayOf(
+                Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            )
+            ActivityCompat.requestPermissions(this.requireActivity(), permissions, 0)
         }
-
+        val locationListener = LocationListener { location ->
+            CoroutineScope(Dispatchers.Main).launch{
+                updateMarkerTasks(location)
+            }
+        }
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,60000,0f,locationListener)
     }
 
     private suspend fun updateMarkerTasks(lastKnownLocation: Location?) {
@@ -138,7 +133,7 @@ class MapFragment : Fragment(), InputListener,
         if(lastKnownLocation != null){
             val point = Point(lastKnownLocation.latitude,lastKnownLocation.longitude)
             mapView.map.mapObjects.clear()
-//            mapView.map.mapObjects.addPlacemark(point, ImageProvider.fromResource(context,R.drawable.search_result))
+
             mapView.map.mapObjects.addCircle(
                 Circle(point, 100.0f),
                 Color.BLUE,
@@ -150,7 +145,7 @@ class MapFragment : Fragment(), InputListener,
                 val markerY = marker.marker.lng
                 mapView.map.mapObjects.addPlacemark(Point(markerX,markerY), ImageProvider.fromResource(context, R.drawable.search_result))
                 mapView.map.move(
-                    CameraPosition(point,14.0f,0.0f,0.0f),
+                    CameraPosition(point,17.0f,0.0f,0.0f),
                     Animation(Animation.Type.SMOOTH,0f),
                     null
                 )
@@ -193,7 +188,7 @@ class MapFragment : Fragment(), InputListener,
         )
     }
 
-//
+    //
     override fun onCameraPositionChanged(
         map: Map,
         cameraPosition: CameraPosition,

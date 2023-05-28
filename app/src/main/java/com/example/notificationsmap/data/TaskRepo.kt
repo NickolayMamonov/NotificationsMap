@@ -12,4 +12,13 @@ class TaskRepo(private val markerDao:MarkerDao){
         return markerDao.getAllTasks()
     }
 
+    suspend fun updateMarker(task: ActiveTaskEntity){
+        return markerDao.updateTask(task)
+    }
+    suspend fun deleteMarker(task: ActiveTaskEntity){
+        return markerDao.deleteTask(task)
+    }
+    suspend fun getTaskById(id: Long): ActiveTaskEntity {
+        return markerDao.getTaskById(id)
+    }
 }

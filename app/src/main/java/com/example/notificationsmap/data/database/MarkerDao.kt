@@ -9,10 +9,16 @@ interface MarkerDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertMarkerPos(task: ActiveTaskEntity)
 
+    @Update
+    suspend fun updateTask(task:ActiveTaskEntity)
+
     @Delete
-    suspend fun deleteMarkerPos(task: ActiveTaskEntity)
+    suspend fun deleteTask(task: ActiveTaskEntity)
 
     @Query("SELECT * FROM Taskstest")
     suspend fun getAllTasks(): List<ActiveTaskEntity>
+
+    @Query("SELECT * FROM Taskstest WHERE id = :id")
+    suspend fun getTaskById(id: Long): ActiveTaskEntity
 
 }

@@ -9,12 +9,14 @@ import android.view.ViewGroup
 import android.widget.Switch
 import android.widget.TextView
 import androidx.appcompat.widget.SwitchCompat
+import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.RecyclerView
 import com.example.notificationsmap.data.database.MarkerDao
 import com.example.notificationsmap.data.entities.ActiveTaskEntity
 import com.example.notificationsmap.data.entities.MarkerEntity
 
-class TasksAdapter(private var taskList: List<ActiveTaskEntity>): RecyclerView.Adapter<TasksAdapter.ViewHolder>() {
+class TasksAdapter(private var taskList: List<ActiveTaskEntity>, private val mItemClickListener: (Long)-> Unit): RecyclerView.Adapter<TasksAdapter.ViewHolder>() {
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TasksAdapter.ViewHolder {
         val itemView = LayoutInflater.from(parent.context).inflate(R.layout.fragment_task_item,parent,false)
         return ViewHolder(itemView)
@@ -25,11 +27,12 @@ class TasksAdapter(private var taskList: List<ActiveTaskEntity>): RecyclerView.A
         val task = taskList[position]
         holder.name.text = task.name
         holder.isActive.isChecked = task.isActive
-        holder.time.text = task.marker.time
-        holder.date.text = task.marker.date
-
-        holder.address.text = "${task.marker.lat} , ${task.marker.lng}"
-
+//        holder.time.text = task.marker.time
+//        holder.date.text = task.marker.date
+        holder.address.text = task.marker.address
+        holder.itemView.setOnClickListener {
+            taskList[position].id?.let { _id -> mItemClickListener(_id) }
+        }
     }
 
     override fun getItemCount(): Int {
@@ -45,8 +48,6 @@ class TasksAdapter(private var taskList: List<ActiveTaskEntity>): RecyclerView.A
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         var name : TextView = itemView.findViewById(R.id.name)
         var isActive : SwitchCompat = itemView.findViewById(R.id.switch_check)
-        var time : TextView = itemView.findViewById(R.id.time)
-        var date : TextView = itemView.findViewById(R.id.date)
         var address : TextView = itemView.findViewById(R.id.address)
 
     }
