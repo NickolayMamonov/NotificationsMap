@@ -34,9 +34,13 @@
         android:name="com.example.notificationsmap.view.DetailsTaskFragment"
         android:label="fragment_details_task"
         tools:layout="@layout/fragment_details_task" >
+        <argument
+            android:name="taskId"
+            app:argType="long" />
         <action
             android:id="@+id/action_detailsTaskFragment_to_main_fragment"
             app:destination="@id/main_fragment" />
     </fragment>
-
 </navigation>
+
+

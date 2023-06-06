@@ -20,11 +20,10 @@ class CreateTaskViewModel(application: Application): AndroidViewModel(applicatio
 
     }
 
-    fun insertMarkerPos(task: ActiveTaskEntity) {
+    fun insertTask(task: ActiveTaskEntity) {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
-                repo.insertMarkerPos(task)
-
+                repo.insertTask(task)
             }
         }
     }

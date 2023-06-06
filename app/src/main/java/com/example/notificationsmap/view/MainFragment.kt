@@ -34,7 +34,7 @@ class MainFragment : Fragment() {
         binding.navbar.setOnItemSelectedListener { item ->
             when(item.itemId) {
                 R.id.map -> {
-                    binding.btnAdd.visibility = View.VISIBLE
+                    binding.btnAdd.visibility = View.INVISIBLE
                     childFragmentManager.commit {
                         replace(R.id.content, mapGraphFragment)
                     }

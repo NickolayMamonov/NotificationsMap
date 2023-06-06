@@ -43,9 +43,6 @@ class NotificationService: Service() {
             ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
                 this,
                 android.Manifest.permission.ACCESS_BACKGROUND_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                this,
-                android.Manifest.permission.SET_ALARM
             ) != PackageManager.PERMISSION_GRANTED
         ){
             return START_NOT_STICKY
@@ -53,7 +50,6 @@ class NotificationService: Service() {
         notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         val notificationChannel = NotificationChannel("NotificationServiceChannel","Notification Service Channel", NotificationManager.IMPORTANCE_DEFAULT)
         notificationManager.createNotificationChannel(notificationChannel)
-
 
         startForeground(1,buildNotification("Сервис запущен!", ""))
 
@@ -63,6 +59,7 @@ class NotificationService: Service() {
                 updateMarkerTasks(location)
             }
         }
+
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,60000,0f,locationListener)
 
 //        scope.launch{
@@ -78,38 +75,25 @@ class NotificationService: Service() {
         super.onDestroy()
         notificationManager.cancel(1)
     }
-    private suspend fun updateMarkerTasks(lastKnownLocation: Location?) {
+    private suspend fun updateMarkerTasks(lastLocation: Location?) {
         val markers = repo.getAllTasks()
 
-        if(lastKnownLocation != null){
+        if(lastLocation != null){
             for (marker in markers) {
-                if(marker.isActive){
-                    val markerX = marker.marker.lat
-                    val markerY = marker.marker.lng
-                    val circleX = lastKnownLocation.latitude
-                    val circleY = lastKnownLocation.longitude
-                    val isInside = isPointInside(markerX,markerY,circleX,circleY)
-                    if (isInside) {
-                        notificationManager.notify(2,buildNotification(marker.name,marker.marker.desc))
-//                        Toast.makeText(this,"Попал", Toast.LENGTH_LONG).show()
-                    }
-
+                val markerX = marker.lat
+                val markerY = marker.lng
+                val circleX = lastLocation.latitude
+                val circleY = lastLocation.longitude
+                val isInside = isPointInside(markerX,markerY,circleX,circleY)
+                if (isInside) {
+                    notificationManager.notify(2,buildNotification(marker.name,marker.desc))
                 }
 
             }
 
         }
     }
-    private fun buildNotification(title: String, text: String): Notification {
 
-        return NotificationCompat.Builder(this, "NotificationServiceChannel")
-            .setContentTitle(title)
-            .setContentText(text)
-            .setSmallIcon(R.drawable.ic_launcher_foreground)
-            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-            .setAutoCancel(true)
-            .build()
-    }
     private fun isPointInside(
         markerX: Double,
         markerY: Double,
@@ -120,7 +104,16 @@ class NotificationService: Service() {
 
     }
 
+    private fun buildNotification(title: String, text: String): Notification {
 
+        return NotificationCompat.Builder(this, "NotificationServiceChannel")
+            .setContentTitle(title)
+            .setContentText(text)
+            .setSmallIcon(R.drawable.ic_main)
+            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .setAutoCancel(true)
+            .build()
+    }
 //    private fun createDateNotification(name: String, desc: String, date: String, time: String) {
 //
 //        val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager

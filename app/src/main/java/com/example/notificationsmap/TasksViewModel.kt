@@ -13,37 +13,34 @@ import kotlinx.coroutines.withContext
 
 class TasksViewModel(application: Application) : AndroidViewModel(application) {
     private var repo: TaskRepo
-
     init {
         val markerDao = MarkerDatabase.getDatabase(application).markerDao()
         repo = TaskRepo(markerDao)
 
     }
-    suspend fun getAllMarkers(): List<ActiveTaskEntity> {
+    suspend fun getAllTasks(): List<ActiveTaskEntity> {
         return withContext(Dispatchers.IO) {
             repo.getAllTasks()
         }
     }
-    fun updateMarker(task: ActiveTaskEntity){
+    fun updateTask(task: ActiveTaskEntity){
         viewModelScope.launch {
             withContext(Dispatchers.IO){
-                repo.updateMarker(task)
+                repo.updateTask(task)
             }
         }
     }
-    fun deleteMarker(task: ActiveTaskEntity){
+    fun deleteTask(task: ActiveTaskEntity){
         viewModelScope.launch {
             withContext(Dispatchers.IO){
-                repo.deleteMarker(task)
+                repo.deleteTask(task)
             }
         }
     }
 
-    fun getTaskById(id: Long){
-        viewModelScope.launch {
-            withContext(Dispatchers.IO){
-                repo.getTaskById(id)
-            }
+    suspend fun getTaskById(id: Long): ActiveTaskEntity {
+        return withContext(Dispatchers.IO){
+            repo.getTaskById(id)
         }
     }
 }

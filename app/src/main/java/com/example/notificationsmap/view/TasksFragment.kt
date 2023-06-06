@@ -31,24 +31,19 @@ class TasksFragment : Fragment() {
     ): View {
         binding = FragmentTasksBinding.inflate(inflater, container, false)
         viewModel = ViewModelProvider(this)[TasksViewModel::class.java]
-        taskAdapter = TasksAdapter(emptyList()){
-            val action = MainFragmentDirections.actionMainFragmentToDetailsTaskFragment(id.toLong())
+        taskAdapter = TasksAdapter(emptyList()){id ->
+            val action = MainFragmentDirections.actionMainFragmentToDetailsTaskFragment(id)
             findNavController().navigate(action)
         }
         recyclerView = binding.recycleview
 
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
         lifecycleScope.launch {
-            val tasks = viewModel.getAllMarkers()
+            val tasks = viewModel.getAllTasks()
             taskAdapter.updateData(tasks)
         }
         recyclerView.adapter = taskAdapter
         return binding.root
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
     }
 
 }

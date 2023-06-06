@@ -67,7 +67,7 @@ class MapFragment : Fragment(), InputListener,
     private lateinit var searchEdit: EditText
     private lateinit var searchManager: SearchManager
     private lateinit var searchSession: Session
-
+    private lateinit var locationListener: LocationListener
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -118,9 +118,9 @@ class MapFragment : Fragment(), InputListener,
                 Manifest.permission.ACCESS_FINE_LOCATION,
                 Manifest.permission.ACCESS_COARSE_LOCATION
             )
-            ActivityCompat.requestPermissions(this.requireActivity(), permissions, 0)
+            ActivityCompat.requestPermissions(requireActivity(), permissions, 0)
         }
-        val locationListener = LocationListener { location ->
+        locationListener = LocationListener { location ->
             CoroutineScope(Dispatchers.Main).launch{
                 updateMarkerTasks(location)
             }
@@ -128,12 +128,11 @@ class MapFragment : Fragment(), InputListener,
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,60000,0f,locationListener)
     }
 
-    private suspend fun updateMarkerTasks(lastKnownLocation: Location?) {
+    private suspend fun updateMarkerTasks(lastLocation: Location?) {
         val markers = viewModel.getAllMarkers()
-        if(lastKnownLocation != null){
-            val point = Point(lastKnownLocation.latitude,lastKnownLocation.longitude)
+        if(lastLocation != null){
+            val point = Point(lastLocation.latitude,lastLocation.longitude)
             mapView.map.mapObjects.clear()
-
             mapView.map.mapObjects.addCircle(
                 Circle(point, 100.0f),
                 Color.BLUE,
@@ -141,17 +140,15 @@ class MapFragment : Fragment(), InputListener,
                 Color.GREEN
             )
             for (marker in markers) {
-                val markerX = marker.marker.lat
-                val markerY = marker.marker.lng
+                val markerX = marker.lat
+                val markerY = marker.lng
                 mapView.map.mapObjects.addPlacemark(Point(markerX,markerY), ImageProvider.fromResource(context, R.drawable.search_result))
                 mapView.map.move(
                     CameraPosition(point,17.0f,0.0f,0.0f),
                     Animation(Animation.Type.SMOOTH,0f),
                     null
                 )
-
             }
-
         }
     }
 
@@ -165,7 +162,7 @@ class MapFragment : Fragment(), InputListener,
         mapView.onStop()
         MapKitFactory.getInstance().onStop()
         super.onStop()
-
+        locationManager.removeUpdates(locationListener)
     }
 
 
@@ -174,6 +171,7 @@ class MapFragment : Fragment(), InputListener,
         sharedViewModel.latCoord.value = point.latitude.toString()
         sharedViewModel.lngCoord.value = point.longitude.toString()
     }
+
 
     override fun onMapLongTap(p0: Map, p1: Point) {
 

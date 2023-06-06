@@ -7,7 +7,7 @@ import com.example.notificationsmap.data.entities.ActiveTaskEntity
 @Dao
 interface MarkerDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertMarkerPos(task: ActiveTaskEntity)
+    suspend fun insertTask(task: ActiveTaskEntity)
 
     @Update
     suspend fun updateTask(task:ActiveTaskEntity)

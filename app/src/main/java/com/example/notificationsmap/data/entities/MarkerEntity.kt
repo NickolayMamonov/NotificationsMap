@@ -6,7 +6,7 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "markerstest")
 data class MarkerEntity(
-    @PrimaryKey(autoGenerate = true) val markid: Long? = null,
+    @PrimaryKey(autoGenerate = true) val markid: Long? = 0,
     @ColumnInfo(name = "time") val time : String,
     @ColumnInfo(name = "date") val date: String,
     @ColumnInfo(name = "address") val address : String,

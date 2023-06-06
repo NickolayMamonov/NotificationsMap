@@ -26,10 +26,8 @@ class TasksAdapter(private var taskList: List<ActiveTaskEntity>, private val mIt
         holder.setIsRecyclable(false)
         val task = taskList[position]
         holder.name.text = task.name
-        holder.isActive.isChecked = task.isActive
-//        holder.time.text = task.marker.time
-//        holder.date.text = task.marker.date
-        holder.address.text = task.marker.address
+        holder.address.text = task.address
+        holder.desc.text = task.desc
         holder.itemView.setOnClickListener {
             taskList[position].id?.let { _id -> mItemClickListener(_id) }
         }
@@ -47,8 +45,7 @@ class TasksAdapter(private var taskList: List<ActiveTaskEntity>, private val mIt
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         var name : TextView = itemView.findViewById(R.id.name)
-        var isActive : SwitchCompat = itemView.findViewById(R.id.switch_check)
         var address : TextView = itemView.findViewById(R.id.address)
-
+        var desc: TextView = itemView.findViewById(R.id.desc)
     }
 }

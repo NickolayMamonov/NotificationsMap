@@ -114,6 +114,7 @@
             app:layout_constraintTop_toBottomOf="@+id/address_txt" />
     </androidx.cardview.widget.CardView>
     <Button
+        android:id="@+id/btn_del"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="15dp"

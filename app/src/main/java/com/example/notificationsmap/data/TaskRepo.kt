@@ -4,18 +4,18 @@ import com.example.notificationsmap.data.database.MarkerDao
 import com.example.notificationsmap.data.entities.ActiveTaskEntity
 
 class TaskRepo(private val markerDao:MarkerDao){
-    suspend fun insertMarkerPos(task: ActiveTaskEntity){
-        markerDao.insertMarkerPos(task)
+    suspend fun insertTask(task: ActiveTaskEntity){
+        markerDao.insertTask(task)
     }
 
     suspend fun getAllTasks(): List<ActiveTaskEntity>{
         return markerDao.getAllTasks()
     }
 
-    suspend fun updateMarker(task: ActiveTaskEntity){
+    suspend fun updateTask(task: ActiveTaskEntity){
         return markerDao.updateTask(task)
     }
-    suspend fun deleteMarker(task: ActiveTaskEntity){
+    suspend fun deleteTask(task: ActiveTaskEntity){
         return markerDao.deleteTask(task)
     }
     suspend fun getTaskById(id: Long): ActiveTaskEntity {
